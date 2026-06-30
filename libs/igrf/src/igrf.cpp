@@ -10,8 +10,9 @@ namespace igrf {
     {
         try {
             double decimal_date = utils::parse_date({date.year, date.month, date.day});
-            std::cout << decimal_date << std::endl;
-            // std::tuple<double, double, double> coords_igrf = parse_coords(coords);
+            auto coords_igrf = utils::parse_coords({coords.lat, coords.lon, coords.hmsl, 
+                    static_cast<int>(coords.ew)});
+
             return Field();
         } catch(std::exception& e) {
             throw std::runtime_error(std::format("Can't calculate IGRF: {}", e.what()));

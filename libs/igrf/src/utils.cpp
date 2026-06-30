@@ -22,7 +22,18 @@ namespace igrf::utils {
         auto ndays_year = year.is_leap() ? 366 : 365;
 
         return y + static_cast<double>(dtp.count()) / ndays_year;
+    }
 
+    std::tuple<double, double, double> parse_coords(const std::tuple<double, double, double, int>& coords)
+    {
+        auto& [lat, lon, hmsl, ew] = coords;
+        if (lat < -90.0 || lat > 90.0)
+            throw std::runtime_error("Invalid latitude. Valid range [-90.0, 90.0]");
+        if (lon > 180 || lon < 0)
+            throw std::runtime_error("Invalid longitude. Valid range[0, 180]");
+
+
+        return {0.0, 0.0, 0.0};
     }
 
 }
