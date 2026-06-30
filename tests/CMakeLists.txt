@@ -1,0 +1,9 @@
+add_executable(igrf_tool)
+target_sources(igrf_tool
+    PUBLIC
+        main.cpp
+)
+target_link_libraries(igrf_tool
+    PRIVATE
+        igrf
+)

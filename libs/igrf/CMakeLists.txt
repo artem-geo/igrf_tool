@@ -1,15 +1,6 @@
-project(igrf_lib)
-
-#include(FetchContent)
-#FetchContent_Declare(
-#        eigen
-#        GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-#        GIT_TAG d71c30c47858effcbd39967097a2d99ee48db464
-#)
-#FetchContent_MakeAvailable(eigen)
-
 add_library(igrf STATIC)
-target_sources(igrf PUBLIC
+target_sources(igrf
+        PRIVATE
             src/igrf.cpp
             src/utils.cpp
         PUBLIC
@@ -18,7 +9,39 @@ target_sources(igrf PUBLIC
             BASE_DIRS include
             FILES
                 include/igrf/igrf.hpp
-                include/igrf/utils.hpp
-                include/igrf/coeffs.hpp
+        PRIVATE
+            FILE_SET headers_private
+            TYPE HEADERS
+            BASE_DIRS src
+            FILES
+                src/utils.hpp
+                src/coeffs.hpp
 )
-#target_link_libraries(igrf PRIVATE eigen)
+
+find_package(Python3 QUIET COMPONENTS Interpreter)
+if(NOT Python3_Interpreter_FOUND)
+    message(FATAL_ERROR
+            "Python 3 is required to generate IGRF coefficients. "
+            "Please install Python 3 and re-run CMake.")
+endif()
+
+set(IGRF_COEFFS_INPUT "${CMAKE_CURRENT_SOURCE_DIR}/../../python/igrf14coeffs.txt")
+set(IGRF_COEFFS_PARSER "${CMAKE_CURRENT_SOURCE_DIR}/../../python/coeff_parser.py")
+set(IGRF_COEFFS_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/src/coeffs.hpp")
+
+add_custom_target(generate_igrf_coeffs ALL
+        COMMAND Python3::Interpreter
+                "${IGRF_COEFFS_PARSER}"
+                "${IGRF_COEFFS_INPUT}"
+                "${IGRF_COEFFS_HEADER}"
+        BYPRODUCTS "${IGRF_COEFFS_HEADER}"
+        DEPENDS
+                "${IGRF_COEFFS_PARSER}"
+                "${IGRF_COEFFS_INPUT}"
+        COMMENT "Generating IGRF coefficient header"
+        VERBATIM
+)
+
+if(TARGET generate_igrf_coeffs)
+    add_dependencies(igrf generate_igrf_coeffs)
+endif()
