@@ -11,7 +11,7 @@ namespace igrf::utils {
         std::chrono::year year{y};
         std::chrono::year_month_day ymd {year, std::chrono::month{m}, std::chrono::day{d}};
         if (!ymd.ok())
-            throw std::runtime_error("Check date provided");
+            throw std::runtime_error("Wrong date");
         auto tp = std::chrono::sys_days(ymd);
 
         // ymd beginning of year
@@ -42,7 +42,7 @@ namespace igrf::utils {
 //     }
 
 
-    // double to_decimal_year(const std::chrono::year_month_day& date) 
+    // double to_decimal_year(const std::chrono::year_month_day& date)
     // {
     //     if (!date.ok())
     //         throw std::ios_base::failure("Wrong date format");
