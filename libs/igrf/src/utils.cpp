@@ -1,15 +1,16 @@
 #include "coeffs.hpp"
 #include "utils.hpp"
 #include <chrono>
-#include <limits>
+#include <cmath>
 #include <stdexcept>
 
 namespace igrf::utils {
-    double parse_date(const std::tuple<int, unsigned, unsigned>& date)
+    double parse_date(const Date& date)
     {
-        const auto& [y, m, d] = date;
-        std::chrono::year year{y};
-        std::chrono::year_month_day ymd {year, std::chrono::month{m}, std::chrono::day{d}};
+        if (date.year < 1900)
+            throw std::runtime_error("Year can't be < 1900");
+        std::chrono::year year{date.year};
+        std::chrono::year_month_day ymd {year, std::chrono::month{date.month}, std::chrono::day{date.day}};
         if (!ymd.ok())
             throw std::runtime_error("Wrong date");
         auto tp = std::chrono::sys_days(ymd);
@@ -21,19 +22,29 @@ namespace igrf::utils {
         auto dtp = tp - tp_boy;
         auto ndays_year = year.is_leap() ? 366 : 365;
 
-        return y + static_cast<double>(dtp.count()) / ndays_year;
+        return date.year + static_cast<double>(dtp.count()) / ndays_year;
     }
 
-    std::tuple<double, double, double> parse_coords(const std::tuple<double, double, double, int>& coords)
+    CoordinatesIGRF parse_coords(const Coordinates& coords)
     {
-        auto& [lat, lon, hmsl, ew] = coords;
-        if (lat < -90.0 || lat > 90.0)
-            throw std::runtime_error("Invalid latitude. Valid range [-90.0, 90.0]");
-        if (lon > 180 || lon < 0)
+        if (coords.lat < 0 || coords.lat > 90.0)
+            throw std::runtime_error("Invalid latitude. Valid range [0, 90.0]");
+        if (coords.lon > 180 || coords.lon < 0)
             throw std::runtime_error("Invalid longitude. Valid range[0, 180]");
+        if (coords.alt < -2'300)
+            throw std::runtime_error("Altitude should be > -2'300'000 m");
+        
 
+        // ns == 0 -> lat North, ns == 1 -> lat South
+        double colat = (static_cast<int>(coords.ns) == 0) ? 90 - coords.lat : 90 + coords.lat;  
+        // ew == 0 -> lon East, ew == 1 -> lon West
+        double lon_new = (static_cast<int>(coords.ew) == 0) ? coords.lon : 360 - coords.lon;
+        double alt_new = Re + coords.alt;
+        
+        colat = colat * M_PI / 180;
+        lon_new = lon_new * M_PI / 180;
 
-        return {0.0, 0.0, 0.0};
+        return {colat, lon_new, alt_new};
     }
 
 }

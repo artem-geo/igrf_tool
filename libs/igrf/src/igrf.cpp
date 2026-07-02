@@ -9,9 +9,9 @@ namespace igrf {
     Field calc_igrf(const Coordinates& coords, const Date& date)
     {
         try {
-            double decimal_date = utils::parse_date({date.year, date.month, date.day});
-            auto coords_igrf = utils::parse_coords({coords.lat, coords.lon, coords.hmsl, 
-                    static_cast<int>(coords.ew)});
+            double decimal_date = utils::parse_date(date);
+            auto coords_igrf = utils::parse_coords(coords);
+            std::cout << std::format("{} {} {}", coords_igrf.colat, coords_igrf.lon, coords_igrf.r) << std::endl;
 
             return Field();
         } catch(std::exception& e) {

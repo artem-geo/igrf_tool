@@ -9,6 +9,7 @@ target_sources(igrf
             BASE_DIRS include
             FILES
                 include/igrf/igrf.hpp
+                include/igrf/types.hpp
         PRIVATE
             FILE_SET headers_private
             TYPE HEADERS

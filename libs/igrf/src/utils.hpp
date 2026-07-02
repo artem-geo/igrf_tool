@@ -1,9 +1,10 @@
 #pragma once
-#include <tuple>
+#include "igrf/types.hpp"
 
 namespace igrf::utils {
-    double parse_date(const std::tuple<int, unsigned, unsigned>& date);
-    std::tuple<double, double, double> parse_coords(const std::tuple<double, double, double, int>& coords);
+    constexpr double Re = 6'371'000; // earth radius in m
+    double parse_date(const Date& date);
+    CoordinatesIGRF parse_coords(const Coordinates& coords);
     // std::pair<int, int> get_min_max_epochs(const Coeffs& coeffs);
 
     // enum class EpochType {

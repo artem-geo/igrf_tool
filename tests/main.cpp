@@ -3,7 +3,7 @@
 
 int main() 
 {
-    igrf::Coordinates coords{34.0, 34.0, 100.0, igrf::LonEW::EAST};
+    igrf::Coordinates coords{34.0, igrf::LatNS::NORTH, 34.0, igrf::LonEW::EAST, 100.0};
     igrf::Date date{2026, 1, 30};
     auto field = igrf::calc_igrf(coords, date);
     ////// debug coeff interpolation
