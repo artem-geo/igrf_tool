@@ -6,12 +6,16 @@
 #include <iostream>
 
 namespace igrf {
-    Field calc_igrf(const Coordinates& coords, const Date& date)
+    using namespace igrf::utils;
+    using namespace igrf::types;
+    Field calc_igrf(const std::tuple<double, double, double>& coords, 
+        const std::tuple<int, unsigned, unsigned>& date)
     {
         try {
-            double decimal_date = utils::parse_date(date);
-            auto coords_igrf = utils::parse_coords(coords);
-            std::cout << std::format("{} {} {}", coords_igrf.colat, coords_igrf.lon, coords_igrf.r) << std::endl;
+            double decimal_date = parse_date(date);
+            auto coords_igrf = parse_coords(coords);
+            auto coeffs = get_coeffs(decimal_date);
+            
 
             return Field();
         } catch(std::exception& e) {

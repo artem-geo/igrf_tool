@@ -78,11 +78,9 @@ if __name__ == '__main__':
                     get_data(line, epochs, coeffs)
         # write coeff.hpp file
         with open(ofile, 'w') as f:
-            f.write("#pragma once\n#include <map>\n#include <vector>\n\n")
-            f.write("struct GH_vals {\n")
-            f.write("    std::vector<double> g;\n    std::vector<double> h;\n};\n")
-            f.write("using Coeffs = std::map<int, GH_vals>;\n\n")
+            f.write("#pragma once\n#include \"igrf/types.hpp\"\n\n")
             f.write("namespace igrf::constants {\n")
+            f.write("    using namespace igrf::types;\n")
             f.write("    const Coeffs COEFFS = {\n")
             epochs = coeffs.keys()
             for i, epoch in enumerate(epochs):

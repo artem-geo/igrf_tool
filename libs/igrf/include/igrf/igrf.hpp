@@ -1,6 +1,9 @@
 #pragma once
 #include "igrf/types.hpp"
+#include <tuple>
 
 namespace igrf {
-    Field calc_igrf(const Coordinates& coords, const Date& date);
+    using namespace igrf::types;
+    Field calc_igrf(const std::tuple<double, double, double>& coords, 
+        const std::tuple<int, unsigned, unsigned>& date);
 }

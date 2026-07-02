@@ -1,25 +1,14 @@
 #pragma once 
+#include <map>
+#include <vector>
 
-namespace igrf {
-    enum class LonEW {EAST, WEST};
-    enum class LatNS {NORTH, SOUTH};
-    struct Coordinates {
-        double lat;
-        LatNS ns;
-        double lon;
-        LonEW ew;
-        double alt;
+namespace igrf::types {
+    constexpr double Re = 6'371; // earth radius in km
+    struct GH_vals {
+        std::vector<double> g;
+        std::vector<double> h;
     };
-    struct CoordinatesIGRF {
-        double colat;
-        double lon;
-        double r;
-    };
-    struct Date {
-        int year;
-        unsigned month;
-        unsigned day;
-    };
+    using Coeffs = std::map<int, GH_vals>;
 
     struct Field {
         double Bx;
