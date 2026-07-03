@@ -6,10 +6,58 @@
 
 #include <iostream>
 
-namespace igrf::utils {
-    using namespace igrf::types;
-    using namespace igrf::constants;
+using namespace igrf::types;
+using namespace igrf::constants;
 
+namespace {
+    int get_triangular(int n, int m)
+    {
+        return n*(n+1)/2 - 1 + m;
+    }
+
+    void extrapolate_coeffs(double date_decimal, GH_vals& coeffs_extr)
+    {
+        const GH_vals& coeffs_max = std::prev(COEFFS.end())->second;
+        double epoch_max = std::prev(COEFFS.end())->first;
+        const GH_vals& coeffs_sv = COEFFS.at(0);
+        coeffs_extr.g = std::vector<double>(coeffs_max.g.size(), 0.0);
+        coeffs_extr.h = std::vector<double>(coeffs_max.h.size(), 0.0);
+        double depoch = date_decimal - epoch_max;
+        for (int i {0}; i < coeffs_max.g.size(); ++i) {
+            coeffs_extr.g[i] = coeffs_max.g[i] + depoch * coeffs_sv.g[i];
+            coeffs_extr.h[i] = coeffs_max.h[i] + depoch * coeffs_sv.h[i];
+        }
+    }
+
+    void interpolate_coeffs(double date_decimal, GH_vals& coeffs)
+    {
+        int epoch_before {-1};
+        int epoch_after {-1};
+        for (const auto& [epoch, ecoeffs] : COEFFS) {
+            if (epoch < date_decimal) {
+                continue; // skip sv
+            } else if (epoch == date_decimal) {
+                coeffs.g = ecoeffs.g;
+                coeffs.h = ecoeffs.h;
+                return;
+            } else {
+                epoch_before = epoch - 5;
+                epoch_after = epoch;
+                break;
+            }
+        }
+        const GH_vals& coeffs_before = COEFFS.at(epoch_before);
+        const GH_vals& coeffs_after = COEFFS.at(epoch_after);
+        double depoch = date_decimal - epoch_before;
+        for (int i {0}; i < coeffs_before.g.size(); ++i) {
+            coeffs.g[i] = coeffs_before.g[i] + depoch * 1/5 * (coeffs_after.g[i] - coeffs_before.g[i]);
+            coeffs.h[i] = coeffs_before.h[i] + depoch * 1/5 * (coeffs_after.h[i] - coeffs_before.h[i]);
+        }
+    }
+
+}
+
+namespace igrf::utils {
     double parse_date(const std::tuple<int, unsigned, unsigned>& date)
     {
         auto epoch_max = std::prev(COEFFS.end())->first + 5;
@@ -51,24 +99,6 @@ namespace igrf::utils {
         return {colat, lon_new, alt_new};
     }
 
-    int get_triangular(int n, int m)
-    {
-        return n*(n+1)/2 - 1 + m;
-    }
-
-    void extrapolate_coeffs(double date_decimal, GH_vals& coeffs_extr)
-    {
-        const GH_vals& coeffs_max = std::prev(COEFFS.end())->second;
-        double epoch_max = std::prev(COEFFS.end())->first;
-        const GH_vals& coeffs_sv = COEFFS.at(0);
-        coeffs_extr.g = std::vector<double>(coeffs_max.g.size(), 0.0);
-        coeffs_extr.h = std::vector<double>(coeffs_max.h.size(), 0.0);
-        for (int i {0}; i < coeffs_max.g.size(); ++i) {
-            coeffs_extr.g[i] = coeffs_max.g[i] + (date_decimal - epoch_max) * coeffs_sv.g[i];
-            coeffs_extr.h[i] = coeffs_max.h[i] + (date_decimal - epoch_max) * coeffs_sv.h[i];
-        }
-    }
-
     GH_vals get_coeffs(double date_decimal)
     {
         GH_vals coeffs;
@@ -77,70 +107,8 @@ namespace igrf::utils {
         auto epoch_last = std::prev(COEFFS.end())->first;
         if (date_decimal > epoch_last)
             extrapolate_coeffs(date_decimal, coeffs);
-        // else
-        //     interpolate_coeffs(igrf::constants::COEFFS, coeffs);
-
-
+        else
+            interpolate_coeffs(date_decimal, coeffs);
         return coeffs;
     }
 }
-
-// namespace igrf::utils {
-
-
-
-    // double to_decimal_year(const std::chrono::year_month_day& date)
-    // {
-    //     if (!date.ok())
-    //         throw std::ios_base::failure("Wrong date format");
-    //     auto year = date.year();
-    //     int ndays = year.is_leap() ? 366 : 365;
-    //     std::chrono::sys_days start = std::chrono::sys_days {year / std::chrono::January / 1};
-    //     std::chrono::sys_days current = std::chrono::sys_days(date);
-    //     int days_passed = (current - start).count();
-    //     return int(year) + static_cast<double>(days_passed) / ndays;
-    // }
-
-//     EpochType get_epoch_type(double date) {
-//         if (date < 1900.000 || date >= 2030.000)
-//             return EpochType::INVALID;
-//         else if ((date - static_cast<int>(date)) < 0.001)
-//             return EpochType::EVEN;
-//         else
-//             return EpochType::INTERIM;
-//     }
-
-//     void interp_coeffs(const Coeffs& coeffs, double date, GH_vals& epoch_res) {
-//         int date_pre = static_cast<int>(date);
-//         auto [epoch_min, epoch_max] = get_min_max_epochs(coeffs);
-
-//         const GH_vals& epoch_pre = coeffs.at(date_pre);
-
-//         if (date < epoch_max) {
-//             const GH_vals& epoch_post = coeffs.at(date_pre + 5);
-//             for (int i {0}; i < epoch_pre.g.size(); ++i) {
-//                 epoch_res.g[i] = epoch_pre.g[i] + (date - date_pre) * 1/5 * (epoch_post.g[i] - epoch_post.g[i]);
-//                 epoch_res.h[i] = epoch_pre.h[i] + (date - date_pre) * 1/5 * (epoch_post.h[i] - epoch_post.h[i]);
-//             }
-//         } else {
-//             const GH_vals& epoch_sv = coeffs.at(0);
-//             for (int i {0}; i < epoch_pre.g.size(); ++i) {
-//                 epoch_res.g[i] = epoch_pre.g[i] + (date - date_pre) * epoch_sv.g[i];
-//                 epoch_res.h[i] = epoch_pre.h[i] + (date - date_pre) * epoch_sv.h[i];
-//             }
-//         }
-//     }
-
-//     void get_igrf_coeffs(const Coeffs& coeffs, double date, GH_vals& epoch_res) {
-//         EpochType epoch_type = get_epoch_type(date);
-//         switch (epoch_type) {
-//         case EpochType::INVALID:
-//             throw std::ios_base::failure("Wrong input date (should be >1900/01/01 and < 2030/12/31");
-//         case EpochType::EVEN:
-//             epoch_res = coeffs.at(static_cast<int>(date));
-//             break;
-//         case EpochType::INTERIM:
-//             interp_coeffs(coeffs, date, epoch_res);
-//         }
-//     }
-// }
