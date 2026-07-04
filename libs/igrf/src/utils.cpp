@@ -10,11 +10,6 @@ using namespace igrf::types;
 using namespace igrf::constants;
 
 namespace {
-    int get_triangular(int n, int m)
-    {
-        return n*(n+1)/2 - 1 + m;
-    }
-
     void extrapolate_coeffs(double date_decimal, GH_vals& coeffs_extr)
     {
         const GH_vals& coeffs_max = std::prev(COEFFS.end())->second;
@@ -54,7 +49,12 @@ namespace {
             coeffs.h[i] = coeffs_before.h[i] + depoch * 1/5 * (coeffs_after.h[i] - coeffs_before.h[i]);
         }
     }
-
+    int factorial (int n)
+    {
+        if (n == 0)
+            return 1;
+        return n*factorial(n-1);
+    }
 }
 
 namespace igrf::utils {
@@ -110,5 +110,23 @@ namespace igrf::utils {
         else
             interpolate_coeffs(date_decimal, coeffs);
         return coeffs;
+    }
+
+    int get_triangular(int n, int m)
+    {
+        return n*(n+1)/2 - 1 + m;
+    }
+    
+    int get_max_triangular(int size)
+    {
+        int k = std::floor((-1 + std::sqrt(1 + 8 * size)) / 2);
+        return int(k * (k + 1) / 2);
+    }
+
+    double calc_legendre(int n, int m, double colat_rad)
+    {
+        double cos_colat = std::cos(colat_rad);
+        double schmidt_norm = (m ==0) ? 1 : std::sqrt(2*factorial(n-m)/factorial(n+m));
+        return schmidt_norm * std::assoc_legendre(n, m, cos_colat);
     }
 }

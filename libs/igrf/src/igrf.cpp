@@ -13,9 +13,20 @@ namespace igrf {
     {
         try {
             double decimal_date = parse_date(date);
-            auto coords_igrf = parse_coords(coords);
+            const auto& [colat, lon, alt] = parse_coords(coords);
             auto coeffs = get_coeffs(decimal_date);
-            
+            Field field;
+            for (int n {1}; ; ++n) {
+                for (int m {0}; m <= n; ++m) {
+                    int idx = get_triangular(n, m);
+                    
+
+                    if (idx == coeffs.g.size()-1)
+                        goto loop_break;
+                }
+            }
+
+            loop_break:
             return Field();
         } catch(std::exception& e) {
             throw std::runtime_error(std::format("Can't calculate IGRF: {}", e.what()));
