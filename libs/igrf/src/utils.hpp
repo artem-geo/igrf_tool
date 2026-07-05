@@ -9,5 +9,5 @@ namespace igrf::utils {
     std::tuple<double, double, double> parse_coords(const std::tuple<double, double, double>& coords);
     GH_vals get_coeffs(double date_decimal);
     int get_triangular(int n, int m);
-    double calc_legendre(int n, int m, double colat_rad);
+    double calc_legendre(int n, int m, double x);
 }

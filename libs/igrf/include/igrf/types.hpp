@@ -2,8 +2,13 @@
 #include <map>
 #include <vector>
 
+namespace igrf::constants {
+    constexpr double a = 6'371.2; // igrf reference radius in km
+    constexpr double Req_wgs84 = 6'378.137; // km
+    constexpr double f_wgs84 = 1.0 / 298.257223563;
+    constexpr double e2_wgs84 = f_wgs84 * (2.0 - f_wgs84);
+}
 namespace igrf::types {
-    constexpr double Re = 6'371; // earth radius in km
     struct GH_vals {
         std::vector<double> g;
         std::vector<double> h;
@@ -11,11 +16,8 @@ namespace igrf::types {
     using Coeffs = std::map<int, GH_vals>;
 
     struct Field {
-        double Bx;
-        double By;
-        double Bz;
-        double B;
-        double inclination;
-        double declination;
+        double X {0.0};
+        double Y {0.0};
+        double Z {0.0};
     };
 }

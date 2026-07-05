@@ -82,21 +82,29 @@ namespace igrf::utils {
 
     std::tuple<double, double, double> parse_coords(const std::tuple<double, double, double>& coords)
     {
-        const auto& [lat, lon, alt] = coords;
-        if (lat < -90 || lat > 90.0)
+        const auto& [lat_geod_deg, lon_geod_deg, alt_geod] = coords;
+        if (lat_geod_deg < -90 || lat_geod_deg > 90.0)
             throw std::runtime_error("Invalid latitude. Valid range [-90.0, 90.0]");
-        if (lon < -180|| lon > 180)
+        if (lon_geod_deg < -180|| lon_geod_deg > 180)
             throw std::runtime_error("Invalid longitude. Valid range[-180, 180]");
-        if (alt < -2'300)
+        if (alt_geod < -2'300)
             throw std::runtime_error("Altitude should be > -2'300'000 m");
-        double colat = 90 - lat;
-        double lon_new = (lon > 0) ? lon : 360 + lon;
-        double alt_new = Re + alt;
-        
-        colat = colat * M_PI / 180;
-        lon_new = lon_new * M_PI / 180;
 
-        return {colat, lon_new, alt_new};
+        double lat_geod = lat_geod_deg * M_PI / 180;
+        double sin_lat = std::sin(lat_geod);
+        double cos_lat = std::cos(lat_geod);
+        
+        // N = prime vertical radius of curvature
+        const double N = Req_wgs84 / std::sqrt(1.0 - e2_wgs84 * sin_lat * sin_lat);
+
+        double rho = (N + alt_geod) * cos_lat;
+        double z = (N * (1.0 - e2_wgs84) + alt_geod) * sin_lat;
+        double lat_geoc = std::atan2(z, rho);
+        double radius = std::hypot(rho, z);
+        double colat_geoc = M_PI / 2 - lat_geoc;
+        double lon_geoc = ((lon_geod_deg >= 0) ? lon_geod_deg : 360 + lon_geod_deg) * M_PI / 180;
+
+        return {colat_geoc, lon_geoc, radius};
     }
 
     GH_vals get_coeffs(double date_decimal)
@@ -123,10 +131,9 @@ namespace igrf::utils {
         return int(k * (k + 1) / 2);
     }
 
-    double calc_legendre(int n, int m, double colat_rad)
+    double calc_legendre(int n, int m, double x)
     {
-        double cos_colat = std::cos(colat_rad);
         double schmidt_norm = (m ==0) ? 1 : std::sqrt(2*factorial(n-m)/factorial(n+m));
-        return schmidt_norm * std::assoc_legendre(n, m, cos_colat);
+        return schmidt_norm * std::assoc_legendre(n, m, x);
     }
 }
