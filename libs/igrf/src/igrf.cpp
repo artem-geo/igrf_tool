@@ -97,7 +97,7 @@ namespace igrf {
     using namespace igrf::utils;
 
     /// @brief Calculates IGRF for given WGS84 coordinates and date
-    /// @param coords WGS84 coordinates (Latitude (dec deg), Longitude (dec deg), and Altitude (m AMSL))
+    /// @param coords WGS84 coordinates (Latitude (dec deg), Longitude (dec deg), and Altitude (km AMSL))
     /// @param date Date to calculate IGRF (YYYY, MM, DD)
     /// @return Field object with field components as attributes (X, Y, Z; all geodetic)
     Field calc_igrf(const std::tuple<double, double, double>& coords,

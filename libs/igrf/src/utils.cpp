@@ -10,6 +10,9 @@ using namespace igrf::types;
 using namespace igrf::constants;
 
 namespace {
+    /// @brief Extrapolates Gauss coefficients when date greater than the final epoch
+    /// @param date_decimal Decimal date
+    /// @param coeffs_extr Extrapolated coefficients
     void extrapolate_coeffs(double date_decimal, GH_vals& coeffs_extr)
     {
         const GH_vals& coeffs_max = std::prev(COEFFS.end())->second;
@@ -24,6 +27,9 @@ namespace {
         }
     }
 
+    /// @brief Interpolates Gauss coefficients between two epochs
+    /// @param date_decimal Decimal date
+    /// @param coeffs All Gauss coefficients
     void interpolate_coeffs(double date_decimal, GH_vals& coeffs)
     {
         int epoch_before {-1};
@@ -49,15 +55,12 @@ namespace {
             coeffs.h[i] = coeffs_before.h[i] + depoch * 1/5 * (coeffs_after.h[i] - coeffs_before.h[i]);
         }
     }
-    int factorial (int n)
-    {
-        if (n == 0)
-            return 1;
-        return n*factorial(n-1);
-    }
 }
 
 namespace igrf::utils {
+    /// @brief Valudates and transforms provided date
+    /// @param date Date (YYYY, MM, DD)
+    /// @return Decimal year 
     double parse_date(const std::tuple<int, unsigned, unsigned>& date)
     {
         auto epoch_max = std::prev(COEFFS.end())->first + 5;
@@ -80,6 +83,10 @@ namespace igrf::utils {
         return y + static_cast<double>(dtp.count()) / ndays_year;
     }
 
+    /// @brief Validates and transforms provided coordinates
+    /// @param coords WGS84 geodetic coordinates (Latitude (dec deg), Longitude (dec deg), Altitude (km AMSL))
+    /// @return Geocentric coordinates (Colatitude (rad), Longitude(rad), Radial distance (km), 
+    /// Delta (Latitude Geodetic - Latitude Geocentric (rad)))
     std::tuple<double, double, double, double> parse_coords(const std::tuple<double, double, double>& coords)
     {
         const auto& [lat_geod_deg, lon_geod_deg, alt_geod] = coords;
@@ -109,6 +116,9 @@ namespace igrf::utils {
         return {colat_geoc, lon_geoc, radius, delta};
     }
 
+    /// @brief Extracts Gauss coefficient corresponding to a certain date
+    /// @param date_decimal Decimal date
+    /// @return Gauss coefficient for date_decimal
     GH_vals get_coeffs(double date_decimal)
     {
         GH_vals coeffs;
@@ -122,20 +132,12 @@ namespace igrf::utils {
         return coeffs;
     }
 
+    /// @brief Calculates a triangular value
+    /// @param n Spherical harmonic degree
+    /// @param m Spherical harmonic order
+    /// @return Resultant triangular value
     int get_triangular(int n, int m)
     {
         return n*(n+1)/2 - 1 + m;
-    }
-    
-    int get_max_triangular(int size)
-    {
-        int k = std::floor((-1 + std::sqrt(1 + 8 * size)) / 2);
-        return int(k * (k + 1) / 2);
-    }
-
-    double calc_legendre(int n, int m, double x)
-    {
-        double schmidt_norm = (m ==0) ? 1 : std::sqrt(2*factorial(n-m)/factorial(n+m));
-        return schmidt_norm * std::assoc_legendre(n, m, x);
     }
 }

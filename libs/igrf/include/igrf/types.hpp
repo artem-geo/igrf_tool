@@ -9,12 +9,14 @@ namespace igrf::constants {
     constexpr double e2_wgs84 = f_wgs84 * (2.0 - f_wgs84);
 }
 namespace igrf::types {
+    /// @brief Gauss coefficients; attribures g and h (both vectors of double)
     struct GH_vals {
         std::vector<double> g;
         std::vector<double> h;
     };
     using Coeffs = std::map<int, GH_vals>;
 
+    /// @brief Magnetic Field; attribures = X, Y, and Z
     struct Field {
         double X {0.0};
         double Y {0.0};
