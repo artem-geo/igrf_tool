@@ -9,20 +9,37 @@
 #include <tuple>
 
 namespace {
+    // tiny step when on poles
     constexpr double pole_epsilon = 1e-8;
 
+    /// @brief Calculates Schmidt normalisation term
+    /// @param n Spherical harmonic degree
+    /// @param m Spherical harmonic order
+    /// @return Schmidt normalisation term
     double schmidt_norm(int n, int m)
     {
         if (m == 0)
             return 1.0;
+        // gamma function instead of factorials
         return std::sqrt(2.0 * std::exp(std::lgamma(n - m + 1.0) - std::lgamma(n + m + 1.0)));
     }
 
+    /// @brief Calculates Schmidt quasi-normalized associated Legendre function 
+    /// of degree n and order m
+    /// @param n Spherical harmonic degree
+    /// @param m Spherical harmonic order
+    /// @param x Legendre function argument
+    /// @return Schmidt quasi-normalized associated Legendre function value
     double legendre_schmidt(int n, int m, double x)
     {
         return schmidt_norm(n, m) * std::assoc_legendre(n, m, x);
     }
 
+    /// @brief Calculates derivative of Schmidt quasi-normalized associated Legendre function 
+    /// @param n Spherical harmonic degree (1,2,...)
+    /// @param m Spherical harmonic order (0,1,...n)
+    /// @param theta Geocentric colatitude (radians)
+    /// @return Derivative value
     double dlegendre(int n, int m, double theta)
     {
         const double sin_theta = std::sin(theta);
@@ -55,6 +72,12 @@ namespace {
         return (n * cos_theta * p_nm - (n + m) * p_prev) / sin_theta;
     }
 
+    /// @brief Calculates Schmidt quasi-normalized associated Legendre function devided by sin of colatitude.
+    /// The term is used for the calculation of Y component
+    /// @param n Spherical harmonic degree (1,2,...)
+    /// @param m Spherical harmonic order (0,1,...n)
+    /// @param theta Geocentric colatitude (radians)
+    /// @return Schmidt quasi-normalized associated Legendre function value
     double legendre_over_sin(int n, int m, double theta)
     {
         if (m == 0)
@@ -73,13 +96,17 @@ namespace igrf {
     using namespace igrf::types;
     using namespace igrf::utils;
 
+    /// @brief Calculates IGRF for given WGS84 coordinates and date
+    /// @param coords WGS84 coordinates (Latitude (dec deg), Longitude (dec deg), and Altitude (m AMSL))
+    /// @param date Date to calculate IGRF (YYYY, MM, DD)
+    /// @return Field object with field components as attributes (X, Y, Z; all geodetic)
     Field calc_igrf(const std::tuple<double, double, double>& coords,
         const std::tuple<int, unsigned, unsigned>& date)
     {
         try {
             const double decimal_date = parse_date(date);
             // theta = geocentric colatitude, phi = geocentric longitude
-            // radius = geocentric radius
+            // radius = geocentric radius, delta = lat_geod - lat_geoc
             const auto& [theta, phi, radius, delta] = parse_coords(coords);
             const auto coeffs = get_coeffs(decimal_date);
 
