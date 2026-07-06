@@ -9,54 +9,6 @@
 using namespace igrf::types;
 using namespace igrf::constants;
 
-namespace {
-    /// @brief Extrapolates Gauss coefficients when date greater than the final epoch
-    /// @param date_decimal Decimal date
-    /// @param coeffs_extr Extrapolated coefficients
-    void extrapolate_coeffs(double date_decimal, GH_vals& coeffs_extr)
-    {
-        const GH_vals& coeffs_max = std::prev(COEFFS.end())->second;
-        double epoch_max = std::prev(COEFFS.end())->first;
-        const GH_vals& coeffs_sv = COEFFS.at(0);
-        coeffs_extr.g = std::vector<double>(coeffs_max.g.size(), 0.0);
-        coeffs_extr.h = std::vector<double>(coeffs_max.h.size(), 0.0);
-        double depoch = date_decimal - epoch_max;
-        for (int i {0}; i < coeffs_max.g.size(); ++i) {
-            coeffs_extr.g[i] = coeffs_max.g[i] + depoch * coeffs_sv.g[i];
-            coeffs_extr.h[i] = coeffs_max.h[i] + depoch * coeffs_sv.h[i];
-        }
-    }
-
-    /// @brief Interpolates Gauss coefficients between two epochs
-    /// @param date_decimal Decimal date
-    /// @param coeffs All Gauss coefficients
-    void interpolate_coeffs(double date_decimal, GH_vals& coeffs)
-    {
-        int epoch_before {-1};
-        int epoch_after {-1};
-        for (const auto& [epoch, ecoeffs] : COEFFS) {
-            if (epoch < date_decimal) {
-                continue; // skip sv
-            } else if (epoch == date_decimal) {
-                coeffs.g = ecoeffs.g;
-                coeffs.h = ecoeffs.h;
-                return;
-            } else {
-                epoch_before = epoch - 5;
-                epoch_after = epoch;
-                break;
-            }
-        }
-        const GH_vals& coeffs_before = COEFFS.at(epoch_before);
-        const GH_vals& coeffs_after = COEFFS.at(epoch_after);
-        double depoch = date_decimal - epoch_before;
-        for (int i {0}; i < coeffs_before.g.size(); ++i) {
-            coeffs.g[i] = coeffs_before.g[i] + depoch * 1/5 * (coeffs_after.g[i] - coeffs_before.g[i]);
-            coeffs.h[i] = coeffs_before.h[i] + depoch * 1/5 * (coeffs_after.h[i] - coeffs_before.h[i]);
-        }
-    }
-}
-
 namespace igrf::utils {
     /// @brief Valudates and transforms provided date
     /// @param date Date (YYYY, MM, DD)
@@ -116,28 +68,5 @@ namespace igrf::utils {
         return {colat_geoc, lon_geoc, radius, delta};
     }
 
-    /// @brief Extracts Gauss coefficient corresponding to a certain date
-    /// @param date_decimal Decimal date
-    /// @return Gauss coefficient for date_decimal
-    GH_vals get_coeffs(double date_decimal)
-    {
-        GH_vals coeffs;
-        coeffs.g = std::vector<double>((COEFFS.begin()->second).g.size(), 0.0);
-        coeffs.h = std::vector<double>((COEFFS.begin()->second).h.size(), 0.0);
-        auto epoch_last = std::prev(COEFFS.end())->first;
-        if (date_decimal > epoch_last)
-            extrapolate_coeffs(date_decimal, coeffs);
-        else
-            interpolate_coeffs(date_decimal, coeffs);
-        return coeffs;
-    }
-
-    /// @brief Calculates a triangular value
-    /// @param n Spherical harmonic degree
-    /// @param m Spherical harmonic order
-    /// @return Resultant triangular value
-    int get_triangular(int n, int m)
-    {
-        return n*(n+1)/2 - 1 + m;
-    }
+    
 }
