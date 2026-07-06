@@ -4,7 +4,7 @@
 
 int main() 
 {
-    auto field = igrf::calc_igrf2({0, -15, 4}, {2015, 6, 22});
+    auto field = igrf::calc_igrf({50, -15, 4}, {2015, 6, 22});
     std::cout << "X component: " << field.X << std::endl;
     std::cout << "Y component: " << field.Y << std::endl;
     std::cout << "Z component: " << field.Z << std::endl;

@@ -2,7 +2,6 @@ add_library(igrf STATIC)
 target_sources(igrf
         PRIVATE
             src/igrf.cpp
-            src/igrf2.cpp
             src/utils.cpp
         PUBLIC
             FILE_SET headers_public

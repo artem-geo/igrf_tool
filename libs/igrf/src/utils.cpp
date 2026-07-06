@@ -80,7 +80,7 @@ namespace igrf::utils {
         return y + static_cast<double>(dtp.count()) / ndays_year;
     }
 
-    std::tuple<double, double, double> parse_coords(const std::tuple<double, double, double>& coords)
+    std::tuple<double, double, double, double> parse_coords(const std::tuple<double, double, double>& coords)
     {
         const auto& [lat_geod_deg, lon_geod_deg, alt_geod] = coords;
         if (lat_geod_deg < -90 || lat_geod_deg > 90.0)
@@ -90,21 +90,23 @@ namespace igrf::utils {
         if (alt_geod < -2'300)
             throw std::runtime_error("Altitude should be > -2'300'000 m");
 
-        double lat_geod = lat_geod_deg * M_PI / 180;
-        double sin_lat = std::sin(lat_geod);
-        double cos_lat = std::cos(lat_geod);
+        const double lat_geod = lat_geod_deg * M_PI / 180;
+        const double sin_lat = std::sin(lat_geod);
+        const double cos_lat = std::cos(lat_geod);
         
         // N = prime vertical radius of curvature
         const double N = Req_wgs84 / std::sqrt(1.0 - e2_wgs84 * sin_lat * sin_lat);
 
-        double rho = (N + alt_geod) * cos_lat;
-        double z = (N * (1.0 - e2_wgs84) + alt_geod) * sin_lat;
-        double lat_geoc = std::atan2(z, rho);
-        double radius = std::hypot(rho, z);
-        double colat_geoc = M_PI / 2 - lat_geoc;
-        double lon_geoc = ((lon_geod_deg >= 0) ? lon_geod_deg : 360 + lon_geod_deg) * M_PI / 180;
+        const double rho = (N + alt_geod) * cos_lat;
+        const double z = (N * (1.0 - e2_wgs84) + alt_geod) * sin_lat;
+        const double lat_geoc = std::atan2(z, rho);
+        const double radius = std::hypot(rho, z);
+        const double colat_geoc = M_PI / 2 - lat_geoc;
+        const double lon_geoc = ((lon_geod_deg >= 0) ? lon_geod_deg : 360 + lon_geod_deg) * M_PI / 180;
 
-        return {colat_geoc, lon_geoc, radius};
+        const double delta = lat_geod - lat_geoc;
+
+        return {colat_geoc, lon_geoc, radius, delta};
     }
 
     GH_vals get_coeffs(double date_decimal)
