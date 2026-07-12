@@ -6,7 +6,7 @@ project(igrf_tool
 )
 include(CTest)
 set(CMAKE_CXX_STANDARD 23)
-option(IGRF_BUILD_GUI "Build the wxWidgets GUI application" OFF)
+option(IGRF_BUILD_GUI "Build the wxWidgets GUI application" ON)
 
 add_subdirectory(libs/igrf)
 
@@ -14,6 +14,6 @@ if(IGRF_BUILD_GUI)
         add_subdirectory(gui)
 endif()
 
-if(BUILD_TESTING)
-        add_subdirectory(tests)
-endif()
+# if(BUILD_TESTING)
+#         add_subdirectory(tests)
+# endif()

@@ -1,25 +1,13 @@
-#include <wx/wx.h>
+#include <wx/app.h>
 
-class MainFrame : public wxFrame {
-public:
-    MainFrame()
-        : wxFrame(nullptr, wxID_ANY, "wxWidgets on Linux", wxDefaultPosition, wxSize(600, 400))
-    {
-        auto* panel = new wxPanel(this);
-        auto* text = new wxStaticText(panel, wxID_ANY, "Hello from wxWidgets");
+#include "main_frame.hpp"
 
-        auto* sizer = new wxBoxSizer(wxVERTICAL);
-        sizer->Add(text, 0, wxALL, 20);
-
-        panel->SetSizer(sizer);
-    }
-};
-
-class App : public wxApp {
+class App final : public wxApp
+{
 public:
     bool OnInit() override
     {
-        auto* frame = new MainFrame();
+        auto* frame = new main_frame(nullptr, wxID_ANY, "IGRF Tool");
         frame->Show();
         return true;
     }
