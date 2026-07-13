@@ -7,7 +7,7 @@ class App final : public wxApp
 public:
     bool OnInit() override
     {
-        auto* frame = new main_frame(nullptr, wxID_ANY, "IGRF Tool");
+        auto* frame = new MainFrame();
         frame->Show();
         return true;
     }
