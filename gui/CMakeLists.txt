@@ -25,6 +25,8 @@ add_executable(igrf_tool
     src/main_frame.cpp
 )
 
+target_link_libraries(igrf_tool PRIVATE igrf)
+
 if(wxWidgets_FOUND)
     target_link_libraries(igrf_tool PRIVATE ${wxWidgets_LIBRARIES})
 else()

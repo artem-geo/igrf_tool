@@ -1,5 +1,7 @@
+#include "igrf/igrf.hpp"
 #include "panels.hpp"
 
+#include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/valtext.h>
 
@@ -112,7 +114,7 @@ namespace panels {
         vszr_results2->Add(hszr_f, 1, wxEXPAND, 5);
 
         wxBoxSizer* hszr_d = new wxBoxSizer(wxHORIZONTAL);
-        hszr_d->Add( new wxStaticText(this, wxID_ANY, _("D"), wxDefaultPosition, wxDefaultSize, 0),
+        hszr_d->Add(new wxStaticText(this, wxID_ANY, _("D"), wxDefaultPosition, wxDefaultSize, 0),
             1, wxALIGN_CENTER_VERTICAL, 5);
         txtctrl_res_d = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
             wxTE_READONLY, wxTextValidator(wxFILTER_NUMERIC));
@@ -146,6 +148,7 @@ namespace panels {
         Bind(wxEVT_TEXT, &PointPanel::on_lon, this, txtctrl_lon->GetId());
         Bind(wxEVT_TEXT, &PointPanel::on_lat, this, txtctrl_lat->GetId());
         Bind(wxEVT_TEXT, &PointPanel::on_alt, this, txtctrl_alt->GetId());
+        Bind(wxEVT_BUTTON, &PointPanel::on_calc, this, btn_calc->GetId());
     }
     
     void PointPanel::on_lon(wxCommandEvent& event)
@@ -167,6 +170,37 @@ namespace panels {
         btn_calc->Enable(!txtctrl_lon->IsEmpty() &&
                          !txtctrl_lon->IsEmpty() &&
                          !txtctrl_alt->IsEmpty());
+    }
+
+    void PointPanel::on_calc(wxCommandEvent& event)
+    {
+        try {
+            double lat, lon, alt;
+            txtctrl_lat->GetValue().ToDouble(&lat);
+            txtctrl_lon->GetValue().ToDouble(&lon);
+            txtctrl_alt->GetValue().ToDouble(&alt);
+
+            auto dt = clndr->GetDate();
+            int year = dt.GetYear();
+            unsigned month = dt.GetMonth() + 1; // +1 since GetMonth()->[0, 11]
+            unsigned day = dt.GetDay();
+            
+            auto field = igrf::calc_igrf({lat, lon, alt}, {year, month, day});
+            txtctrl_res_x->SetValue(wxString::Format(wxT("%.2f"), field.X));
+            txtctrl_res_y->SetValue(wxString::Format(wxT("%.2f"), field.Y));
+            txtctrl_res_z->SetValue(wxString::Format(wxT("%.2f"), field.Z));
+
+            double total_f = igrf::get_total(field);
+            double decl = igrf::get_decl(field);
+            double incl = igrf::get_incl(field);
+
+            txtctrl_res_f->SetValue(wxString::Format(wxT("%.2f"), total_f));
+            txtctrl_res_d->SetValue(wxString::Format(wxT("%.1f"), decl));
+            txtctrl_res_i->SetValue(wxString::Format(wxT("%.1f"), incl));
+            
+        } catch(std::exception& e) {
+            wxMessageBox(e.what(), "Error", wxICON_EXCLAMATION);
+        }
     }
 
 }

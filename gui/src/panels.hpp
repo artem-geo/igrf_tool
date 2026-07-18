@@ -27,5 +27,6 @@ namespace panels {
         void on_lon(wxCommandEvent& event);
         void on_lat(wxCommandEvent& event);
         void on_alt(wxCommandEvent& event);
+        void on_calc(wxCommandEvent& event);
     };
 }
