@@ -14,36 +14,36 @@ namespace panels {
         wxBoxSizer* vszr_coords = new wxBoxSizer(wxVERTICAL);
 
         wxBoxSizer* hszr_lon = new wxBoxSizer(wxHORIZONTAL);
-        wxStaticText* sttxt_lon = new wxStaticText(this, wxID_ANY, "Longitude", wxDefaultPosition, wxDefaultSize, 0);
+        wxStaticText* sttxt_lon = new wxStaticText(this, wxID_ANY, "Longitude", wxDefaultPosition, wxSize(65, -1), 0);
         sttxt_lon->SetToolTip("Longitued WGS84 in decimal degrees [-180, 180]");
-        hszr_lon->Add(sttxt_lon, 1, wxALIGN_CENTER_VERTICAL, 5);
+        hszr_lon->Add(sttxt_lon, 0, wxALIGN_CENTER_VERTICAL, 5);
         txtctrl_lon = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0,
             wxTextValidator(wxFILTER_NUMERIC));
-        hszr_lon->Add(txtctrl_lon, 3, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
-        hszr_lon->Add(new wxStaticText(this, wxID_ANY, wxString("dec ").append(wxString::FromUTF8("\xc2\xb0")), 
-            wxDefaultPosition, wxDefaultSize, 0), 0, wxALIGN_CENTER_VERTICAL);
+        hszr_lon->Add(txtctrl_lon, 1, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
+        hszr_lon->Add(new wxStaticText(this, wxID_ANY, wxString("dec ").append(wxString::FromUTF8("\xc2\xb0")),
+            wxDefaultPosition, wxSize(30, -1), 0), 0, wxALIGN_CENTER_VERTICAL);
         vszr_coords->Add(hszr_lon, 0, wxEXPAND, 5);
 
         wxBoxSizer* hszr_lat = new wxBoxSizer(wxHORIZONTAL);
-        wxStaticText* sttxt_lat = new wxStaticText(this, wxID_ANY, "Latitude", wxDefaultPosition, wxDefaultSize, 0);
+        wxStaticText* sttxt_lat = new wxStaticText(this, wxID_ANY, "Latitude", wxDefaultPosition, wxSize(65, -1), 0);
         sttxt_lat->SetToolTip("Latitude WGS84 in decimal degrees [-90, 90]");
-        hszr_lat->Add(sttxt_lat, 1, wxALIGN_CENTER_VERTICAL, 5);
+        hszr_lat->Add(sttxt_lat, 0, wxALIGN_CENTER_VERTICAL, 5);
         txtctrl_lat = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0,
             wxTextValidator(wxFILTER_NUMERIC));
         hszr_lat->Add(txtctrl_lat, 3, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
-        hszr_lat->Add(new wxStaticText(this, wxID_ANY, wxString("dec ").append(wxString::FromUTF8("\xc2\xb0")), 
-            wxDefaultPosition, wxDefaultSize, 0), 0, wxALIGN_CENTER_VERTICAL);
+        hszr_lat->Add(new wxStaticText(this, wxID_ANY, wxString("dec ").append(wxString::FromUTF8("\xc2\xb0")),
+            wxDefaultPosition, wxSize(30, -1), 0), 0, wxALIGN_CENTER_VERTICAL);
         vszr_coords->Add(hszr_lat, 0, wxEXPAND | wxTOP, 5);
 
         wxBoxSizer* hszr_alt = new wxBoxSizer(wxHORIZONTAL);
-        wxStaticText* sttxt_alt = new wxStaticText(this, wxID_ANY, "Altitude", wxDefaultPosition, wxDefaultSize, 0);
+        wxStaticText* sttxt_alt = new wxStaticText(this, wxID_ANY, "Altitude", wxDefaultPosition, wxSize(65, -1), 0);
         sttxt_alt->SetToolTip("Altitude in km AMSL [> -2'300]");
-        hszr_alt->Add(sttxt_alt, 1, wxALIGN_CENTER_VERTICAL, 5);
+        hszr_alt->Add(sttxt_alt, 0, wxALIGN_CENTER_VERTICAL, 5);
         txtctrl_alt = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0,
             wxTextValidator(wxFILTER_NUMERIC));
         hszr_alt->Add(txtctrl_alt, 3, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
-        hszr_alt->Add(new wxStaticText(this, wxID_ANY, wxString("km    "), 
-            wxDefaultPosition, wxDefaultSize, 0), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
+        hszr_alt->Add(new wxStaticText(this, wxID_ANY, "km",
+            wxDefaultPosition, wxSize(30, -1), 0), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
         vszr_coords->Add(hszr_alt, 0, wxEXPAND | wxTOP, 5);
 
         wxBoxSizer* vszr_calc = new wxBoxSizer(wxVERTICAL);
@@ -61,8 +61,8 @@ namespace panels {
         vszr_coords->Add(vszr_calc, 1, wxEXPAND, 5);
         hszr_params->Add(vszr_coords, 1, wxEXPAND | wxLEFT | wxRIGHT, 10);
 
-        clndr = new wxCalendarCtrl(this, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxSize( -1,-1 ), 
-            wxCAL_MONDAY_FIRST | wxCAL_SHOW_HOLIDAYS);
+        clndr = new wxCalendarCtrl(this, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxSize(-1, -1), 
+            wxCAL_SHOW_SURROUNDING_WEEKS | wxCAL_SEQUENTIAL_MONTH_SELECTION);
         hszr_params->Add(clndr, 1, wxEXPAND | wxRIGHT, 10);
 
         vszr_point->Add(hszr_params, 0, wxBOTTOM | wxEXPAND | wxTOP, 10);
