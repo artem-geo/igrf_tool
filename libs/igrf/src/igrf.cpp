@@ -214,4 +214,22 @@ namespace igrf {
             throw std::runtime_error(std::format("Can't calculate IGRF: {}", e.what()));
         }
     }
+
+    double get_total(const Field& field)
+    {
+        return std::sqrt(field.X*field.X + field.Y*field.Y + field.Z*field.Z);
+    }
+
+    double get_decl(const Field& field)
+    {
+        double decl_rad = std::asin(field.Y / std::sqrt(field.X*field.X + field.Y*field.Y));
+        return decl_rad * 180 / M_PI;
+    }
+
+    double get_incl(const Field& field)
+    {
+        double incl_rad = std::atan(field.Z / std::sqrt(field.X*field.X + field.Y*field.Y));
+        return incl_rad * 180 / M_PI;
+    }
+
 }

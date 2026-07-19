@@ -1,6 +1,6 @@
 #pragma once
 
-#include "panels.hpp"
+#include "point_panel.hpp"
 
 #include <wx/notebook.h>
 #include <wx/frame.h>

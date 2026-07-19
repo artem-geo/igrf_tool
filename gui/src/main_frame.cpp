@@ -1,10 +1,11 @@
 #include "main_frame.hpp"
 
+#include <wx/icon.h>
 #include <wx/sizer.h>
 
 MainFrame::MainFrame() 
-	: wxFrame(nullptr, wxID_ANY, "IGRF ", wxDefaultPosition, wxSize(550,360), 
-		wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL)
+	: wxFrame(nullptr, wxID_ANY, "IGRF Calculator", wxDefaultPosition, wxSize(550,360),
+		wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | ~wxRESIZE_BORDER)
 {
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 
@@ -17,11 +18,13 @@ MainFrame::MainFrame()
 	// pnl_file = new wxPanel(ntb, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	// ntb->AddPage( pnl_file, _("File"), false );
 
-	vszr->Add( ntb, 1, 0, 0 );
+	vszr->Add(ntb, 1, 0, 0);
 
+	this->SetMinSize(this->GetSize());
+	this->SetMaxSize(this->GetSize());
 
-	this->SetSizer( vszr );
+	this->SetSizer(vszr);
 	this->Layout();
 
-	this->Centre( wxBOTH );
+	this->Centre(wxBOTH);
 }

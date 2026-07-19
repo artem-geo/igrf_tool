@@ -1,5 +1,5 @@
 #include "igrf/igrf.hpp"
-#include "panels.hpp"
+#include "point_panel.hpp"
 
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
@@ -14,8 +14,9 @@ namespace panels {
         wxBoxSizer* vszr_coords = new wxBoxSizer(wxVERTICAL);
 
         wxBoxSizer* hszr_lon = new wxBoxSizer(wxHORIZONTAL);
-        hszr_lon->Add(new wxStaticText(this, wxID_ANY, "Longitude", wxDefaultPosition, wxDefaultSize, 0), 
-            1, wxALIGN_CENTER_VERTICAL, 5);
+        wxStaticText* sttxt_lon = new wxStaticText(this, wxID_ANY, "Longitude", wxDefaultPosition, wxDefaultSize, 0);
+        sttxt_lon->SetToolTip("Longitued WGS84 in decimal degrees [-180, 180]");
+        hszr_lon->Add(sttxt_lon, 1, wxALIGN_CENTER_VERTICAL, 5);
         txtctrl_lon = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0,
             wxTextValidator(wxFILTER_NUMERIC));
         hszr_lon->Add(txtctrl_lon, 3, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
@@ -23,9 +24,10 @@ namespace panels {
             wxDefaultPosition, wxDefaultSize, 0), 0, wxALIGN_CENTER_VERTICAL);
         vszr_coords->Add(hszr_lon, 0, wxEXPAND, 5);
 
-        wxBoxSizer* hszr_lat = new wxBoxSizer( wxHORIZONTAL );
-        hszr_lat->Add(new wxStaticText(this, wxID_ANY, "Latitude", wxDefaultPosition, wxDefaultSize, 0),
-            1, wxALIGN_CENTER_VERTICAL, 5);
+        wxBoxSizer* hszr_lat = new wxBoxSizer(wxHORIZONTAL);
+        wxStaticText* sttxt_lat = new wxStaticText(this, wxID_ANY, "Latitude", wxDefaultPosition, wxDefaultSize, 0);
+        sttxt_lat->SetToolTip("Latitude WGS84 in decimal degrees [-90, 90]");
+        hszr_lat->Add(sttxt_lat, 1, wxALIGN_CENTER_VERTICAL, 5);
         txtctrl_lat = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0,
             wxTextValidator(wxFILTER_NUMERIC));
         hszr_lat->Add(txtctrl_lat, 3, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
@@ -34,8 +36,9 @@ namespace panels {
         vszr_coords->Add(hszr_lat, 0, wxEXPAND | wxTOP, 5);
 
         wxBoxSizer* hszr_alt = new wxBoxSizer(wxHORIZONTAL);
-        hszr_alt->Add(new wxStaticText(this, wxID_ANY, "Altitude", wxDefaultPosition, wxDefaultSize, 0),
-            1, wxALIGN_CENTER_VERTICAL, 5);
+        wxStaticText* sttxt_alt = new wxStaticText(this, wxID_ANY, "Altitude", wxDefaultPosition, wxDefaultSize, 0);
+        sttxt_alt->SetToolTip("Altitude in km AMSL [> -2'300]");
+        hszr_alt->Add(sttxt_alt, 1, wxALIGN_CENTER_VERTICAL, 5);
         txtctrl_alt = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0,
             wxTextValidator(wxFILTER_NUMERIC));
         hszr_alt->Add(txtctrl_alt, 3, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
