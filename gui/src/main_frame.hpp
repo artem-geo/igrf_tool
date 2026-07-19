@@ -1,5 +1,6 @@
 #pragma once
 
+#include "csv_panel.hpp"
 #include "point_panel.hpp"
 
 #include <wx/notebook.h>
@@ -13,11 +14,10 @@ class MainFrame : public wxFrame
 	protected:
 		wxNotebook* ntb;
 		PointPanel* pnl_point;
-		// wxPanel* pnl_file;
+		CsvPanel* pnl_csv;
 
 	public:
 		MainFrame();
 		~MainFrame() = default;
 
 };
-

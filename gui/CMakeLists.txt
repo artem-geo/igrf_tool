@@ -19,6 +19,8 @@ endif()
 
 add_executable(igrf_tool
     src/gui.cpp
+    src/csv_panel.hpp
+    src/csv_panel.cpp
     src/point_panel.hpp
     src/point_panel.cpp
     src/main_frame.hpp

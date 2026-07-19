@@ -15,8 +15,8 @@ MainFrame::MainFrame()
 	pnl_point = new PointPanel(ntb);
 	ntb->AddPage(pnl_point, "Point", true);
 
-	// pnl_file = new wxPanel(ntb, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	// ntb->AddPage( pnl_file, _("File"), false );
+	pnl_csv = new CsvPanel(ntb);
+	ntb->AddPage(pnl_csv, "CSV", false);
 
 	vszr->Add(ntb, 1, 0, 0);
 
