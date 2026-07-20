@@ -1,7 +1,7 @@
 #pragma once
 
 #include <wx/button.h>
-#include <wx/calctrl.h>
+#include <wx/datectrl.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
@@ -16,7 +16,7 @@ namespace panels {
 		wxTextCtrl* txtctrl_lat;
 		wxTextCtrl* txtctrl_alt;
 		wxButton* btn_calc;
-		wxCalendarCtrl* clndr;
+        wxDatePickerCtrl* dtpckr;
 		wxTextCtrl* txtctrl_res_x;
 		wxTextCtrl* txtctrl_res_y;
 		wxTextCtrl* txtctrl_res_z;
