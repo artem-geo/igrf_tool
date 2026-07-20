@@ -10,7 +10,7 @@ namespace panels {
         : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
     {
         wxBoxSizer* vszr_point = new wxBoxSizer(wxVERTICAL);
-        wxBoxSizer* hszr_params = new wxBoxSizer(wxHORIZONTAL);
+        wxGridSizer* gszr_params = new wxGridSizer(1, 2, 0, 0);
         wxBoxSizer* vszr_coords = new wxBoxSizer(wxVERTICAL);
 
         wxBoxSizer* hszr_lat = new wxBoxSizer(wxHORIZONTAL);
@@ -45,43 +45,44 @@ namespace panels {
         hszr_alt->Add(new wxStaticText(this, wxID_ANY, "km",
             wxDefaultPosition, wxSize(30, -1), 0), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
         vszr_coords->Add(hszr_alt, 0, wxEXPAND | wxTOP, 5);
-        hszr_params->Add(vszr_coords, 1, wxEXPAND | wxLEFT | wxRIGHT, 10);
+        gszr_params->Add(vszr_coords, 1, wxEXPAND | wxRIGHT, 5);
 
         wxBoxSizer* vszr_dtcalc = new wxBoxSizer(wxVERTICAL);
 
         wxBoxSizer* hszr_date = new wxBoxSizer(wxHORIZONTAL);
-        hszr_date->Add(new wxStaticText(this, wxID_ANY, "Date", wxDefaultPosition, wxSize(65, -1), 0),
+        hszr_date->Add(new wxStaticText(this, wxID_ANY, "IGRF date", wxDefaultPosition, wxSize(65, -1), 0),
             0, wxALIGN_CENTER_VERTICAL);
         dtpckr = new wxDatePickerCtrl(this, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize);
         hszr_date->Add(dtpckr, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
         vszr_dtcalc->Add(hszr_date, 0, wxEXPAND);
 
         vszr_dtcalc->AddStretchSpacer(1);
-
+        
+        wxBoxSizer* hszr_btn = new wxBoxSizer(wxHORIZONTAL);
+        hszr_btn->Add(new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxSize(65, -1), 0),
+            0, wxALIGN_CENTER_VERTICAL, 5);
         btn_calc = new wxButton(this, wxID_ANY, "Calculate", wxDefaultPosition, wxDefaultSize, 0);
         btn_calc->Enable(false);
-        vszr_dtcalc->Add(btn_calc, 0, wxEXPAND);
+        hszr_btn->Add(btn_calc, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
+        vszr_dtcalc->Add(hszr_btn, 0, wxEXPAND);
 
-        hszr_params->Add(vszr_dtcalc, 1, wxEXPAND | wxLEFT | wxRIGHT, 10);
+        gszr_params->Add(vszr_dtcalc, 1, wxEXPAND | wxLEFT, 5);
 
-        vszr_point->Add(hszr_params, 0, wxBOTTOM | wxEXPAND | wxTOP, 10);
+        vszr_point->Add(gszr_params, 0, wxALL | wxEXPAND, 15);
 
-        wxFlexGridSizer* fgszr_results = new wxFlexGridSizer(2, 3, 5, 10);
-        fgszr_results->AddGrowableCol(0);
-        fgszr_results->AddGrowableCol(1);
-        fgszr_results->AddGrowableCol(2);
+        wxGridSizer* gszr_results = new wxGridSizer(2, 3, 5, 10);
 
-        auto add_result = [this, fgszr_results](const wxString& name, const wxString& unit,
+        auto add_result = [this, gszr_results](const wxString& name, const wxString& unit,
                                                    wxTextCtrl*& result) {
             wxBoxSizer* hszr_result = new wxBoxSizer(wxHORIZONTAL);
-            hszr_result->Add(new wxStaticText(this, wxID_ANY, name, wxDefaultPosition, wxSize(15, -1), 0),
+            hszr_result->Add(new wxStaticText(this, wxID_ANY, name, wxDefaultPosition, wxSize(10, -1), 0),
                 0, wxALIGN_CENTER_VERTICAL);
             result = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,
                 wxTE_READONLY, wxTextValidator(wxFILTER_NUMERIC));
             hszr_result->Add(result, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
             hszr_result->Add(new wxStaticText(this, wxID_ANY, unit, wxDefaultPosition, wxSize(35, -1), 0),
                 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
-            fgszr_results->Add(hszr_result, 1, wxEXPAND);
+            gszr_results->Add(hszr_result, 1, wxEXPAND);
         };
 
         const wxString degrees = wxString("dec ").append(wxString::FromUTF8("\xc2\xb0"));
@@ -92,7 +93,7 @@ namespace panels {
         add_result(_("D"), degrees, txtctrl_res_d);
         add_result(_("I"), degrees, txtctrl_res_i);
 
-        vszr_point->Add(fgszr_results, 0, wxBOTTOM | wxEXPAND | wxLEFT | wxRIGHT, 10);
+        vszr_point->Add(gszr_results, 0, wxBOTTOM | wxEXPAND | wxLEFT | wxRIGHT, 15);
 
         this->SetSizer(vszr_point);
         this->Layout();

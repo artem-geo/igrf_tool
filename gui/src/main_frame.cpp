@@ -4,7 +4,7 @@
 #include <wx/sizer.h>
 
 MainFrame::MainFrame() 
-	: wxFrame(nullptr, wxID_ANY, "IGRF Calculator", wxDefaultPosition, wxSize(500,360),
+	: wxFrame(nullptr, wxID_ANY, "IGRF Calculator", wxDefaultPosition, wxSize(500,255),
 		wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL | ~wxRESIZE_BORDER)
 {
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
