@@ -67,49 +67,62 @@ namespace panels {
     {
         auto* vszr_csv = new wxBoxSizer(wxVERTICAL);
 
-        auto* hszr_file = new wxBoxSizer(wxHORIZONTAL);
-        hszr_file->Add(new wxStaticText(this, wxID_ANY, "CSV file"),
-            0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 10);
-        txtctrl_file = new wxTextCtrl(this, wxID_ANY, wxEmptyString,
-            wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
-        hszr_file->Add(txtctrl_file, 1, wxALIGN_CENTER_VERTICAL | wxRIGHT, 5);
-        btn_load = new wxButton(this, wxID_ANY, "Load CSV");
-        hszr_file->Add(btn_load, 0, wxALIGN_CENTER_VERTICAL);
-        vszr_csv->Add(hszr_file, 0, wxEXPAND | wxALL, 10);
+        auto* gszr_params = new wxGridSizer(1, 2, 0, 0);
 
-        auto* fgszr_columns = new wxFlexGridSizer(2, 4, 8, 10);
-        fgszr_columns->AddGrowableCol(1, 1);
-        fgszr_columns->AddGrowableCol(3, 1);
+        auto* vszr_coords = new wxBoxSizer(wxVERTICAL);
 
-        fgszr_columns->Add(new wxStaticText(this, wxID_ANY, "Latitude"),
-            0, wxALIGN_CENTER_VERTICAL);
+        auto* hszr_lat = new wxBoxSizer(wxHORIZONTAL);
+        hszr_lat->Add(new wxStaticText(this, wxID_ANY, "Latitude",
+            wxDefaultPosition, wxSize(65, -1)), 0, wxALIGN_CENTER_VERTICAL);
         choice_lat = new wxChoice(this, wxID_ANY);
         choice_lat->Enable(false);
-        fgszr_columns->Add(choice_lat, 1, wxEXPAND);
+        hszr_lat->Add(choice_lat, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
+        vszr_coords->Add(hszr_lat, 0, wxEXPAND);
 
-        fgszr_columns->Add(new wxStaticText(this, wxID_ANY, "Longitude"),
-            0, wxALIGN_CENTER_VERTICAL);
+        auto* hszr_lon = new wxBoxSizer(wxHORIZONTAL);
+        hszr_lon->Add(new wxStaticText(this, wxID_ANY, "Longitude",
+            wxDefaultPosition, wxSize(65, -1)), 0, wxALIGN_CENTER_VERTICAL);
         choice_lon = new wxChoice(this, wxID_ANY);
         choice_lon->Enable(false);
-        fgszr_columns->Add(choice_lon, 1, wxEXPAND);
+        hszr_lon->Add(choice_lon, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
+        vszr_coords->Add(hszr_lon, 0, wxEXPAND | wxTOP, 5);
 
-        fgszr_columns->Add(new wxStaticText(this, wxID_ANY, "Altitude"),
-            0, wxALIGN_CENTER_VERTICAL);
+        auto* hszr_alt = new wxBoxSizer(wxHORIZONTAL);
+        hszr_alt->Add(new wxStaticText(this, wxID_ANY, "Altitude",
+            wxDefaultPosition, wxSize(65, -1)), 0, wxALIGN_CENTER_VERTICAL);
         choice_alt = new wxChoice(this, wxID_ANY);
         choice_alt->Enable(false);
-        fgszr_columns->Add(choice_alt, 1, wxEXPAND);
+        hszr_alt->Add(choice_alt, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
+        vszr_coords->Add(hszr_alt, 0, wxEXPAND | wxTOP, 5);
 
-        fgszr_columns->Add(new wxStaticText(this, wxID_ANY, "Date"),
-            0, wxALIGN_CENTER_VERTICAL);
+        gszr_params->Add(vszr_coords, 1, wxEXPAND | wxLEFT | wxRIGHT, 10);
+
+        auto* vszr_csv_date_calc = new wxBoxSizer(wxVERTICAL);
+
+        auto* hszr_file = new wxBoxSizer(wxHORIZONTAL);
+        hszr_file->Add(new wxStaticText(this, wxID_ANY, "CSV file",
+            wxDefaultPosition, wxSize(65, -1)), 0, wxALIGN_CENTER_VERTICAL);
+        txtctrl_file = new wxTextCtrl(this, wxID_ANY, wxEmptyString,
+            wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+        hszr_file->Add(txtctrl_file, 1, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
+        btn_load = new wxButton(this, wxID_ANY, "...");
+        hszr_file->Add(btn_load, 0, wxALIGN_CENTER_VERTICAL);
+        vszr_csv_date_calc->Add(hszr_file, 0, wxEXPAND);
+
+        auto* hszr_date = new wxBoxSizer(wxHORIZONTAL);
+        hszr_date->Add(new wxStaticText(this, wxID_ANY, "Date",
+            wxDefaultPosition, wxSize(65, -1)), 0, wxALIGN_CENTER_VERTICAL);
         choice_date = new wxChoice(this, wxID_ANY);
         choice_date->Enable(false);
-        fgszr_columns->Add(choice_date, 1, wxEXPAND);
-
-        vszr_csv->Add(fgszr_columns, 0, wxEXPAND | wxLEFT | wxRIGHT, 10);
+        hszr_date->Add(choice_date, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
+        vszr_csv_date_calc->Add(hszr_date, 0, wxEXPAND | wxTOP, 5);
 
         btn_calc = new wxButton(this, wxID_ANY, "Calculate");
         btn_calc->Enable(false);
-        vszr_csv->Add(btn_calc, 0, wxALIGN_RIGHT | wxALL, 10);
+        vszr_csv_date_calc->Add(btn_calc, 0, wxEXPAND | wxTOP, 5);
+
+        gszr_params->Add(vszr_csv_date_calc, 1, wxEXPAND | wxLEFT | wxRIGHT, 10);
+        vszr_csv->Add(gszr_params, 0, wxEXPAND | wxTOP | wxBOTTOM, 10);
 
         txtctrl_info = new wxTextCtrl(this, wxID_ANY, wxEmptyString,
             wxDefaultPosition, wxDefaultSize,
