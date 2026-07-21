@@ -21,7 +21,7 @@ namespace panels {
             wxTextValidator(wxFILTER_NUMERIC));
         hszr_lat->Add(txtctrl_lat, 3, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
         hszr_lat->Add(new wxStaticText(this, wxID_ANY, wxString("dec ").append(wxString::FromUTF8("\xc2\xb0")),
-            wxDefaultPosition, wxSize(30, -1), 0), 0, wxALIGN_CENTER_VERTICAL);
+            wxDefaultPosition, wxSize(32, -1), 0), 0, wxALIGN_CENTER_VERTICAL);
         vszr_coords->Add(hszr_lat, 0, wxEXPAND, 5);
 
         wxBoxSizer* hszr_lon = new wxBoxSizer(wxHORIZONTAL);
@@ -32,7 +32,7 @@ namespace panels {
             wxTextValidator(wxFILTER_NUMERIC));
         hszr_lon->Add(txtctrl_lon, 1, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
         hszr_lon->Add(new wxStaticText(this, wxID_ANY, wxString("dec ").append(wxString::FromUTF8("\xc2\xb0")),
-            wxDefaultPosition, wxSize(30, -1), 0), 0, wxALIGN_CENTER_VERTICAL);
+            wxDefaultPosition, wxSize(32, -1), 0), 0, wxALIGN_CENTER_VERTICAL);
         vszr_coords->Add(hszr_lon, 0, wxEXPAND | wxTOP, 5);
 
         wxBoxSizer* hszr_alt = new wxBoxSizer(wxHORIZONTAL);
@@ -43,15 +43,16 @@ namespace panels {
             wxTextValidator(wxFILTER_NUMERIC));
         hszr_alt->Add(txtctrl_alt, 3, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
         hszr_alt->Add(new wxStaticText(this, wxID_ANY, "km",
-            wxDefaultPosition, wxSize(30, -1), 0), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
+            wxDefaultPosition, wxSize(32, -1), 0), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
         vszr_coords->Add(hszr_alt, 0, wxEXPAND | wxTOP, 5);
         gszr_params->Add(vszr_coords, 1, wxEXPAND | wxRIGHT, 5);
 
         wxBoxSizer* vszr_dtcalc = new wxBoxSizer(wxVERTICAL);
 
         wxBoxSizer* hszr_date = new wxBoxSizer(wxHORIZONTAL);
-        hszr_date->Add(new wxStaticText(this, wxID_ANY, "IGRF date", wxDefaultPosition, wxSize(65, -1), 0),
-            0, wxALIGN_CENTER_VERTICAL);
+        wxStaticText* sttxt_date = new wxStaticText(this, wxID_ANY, "IGRF date", wxDefaultPosition, wxSize(65, -1), 0);
+        sttxt_date->SetToolTip("Date to calculate IGRF");
+        hszr_date->Add(sttxt_date, 0, wxALIGN_CENTER_VERTICAL);
         dtpckr = new wxDatePickerCtrl(this, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize);
         hszr_date->Add(dtpckr, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
         vszr_dtcalc->Add(hszr_date, 0, wxEXPAND);

@@ -2,6 +2,7 @@
 
 #include <wx/button.h>
 #include <wx/choice.h>
+#include <wx/filepicker.h>
 #include <wx/panel.h>
 #include <wx/textctrl.h>
 
@@ -13,7 +14,7 @@ namespace panels {
 
     public:
         wxTextCtrl* txtctrl_file;
-        wxButton* btn_load;
+        wxFilePickerCtrl* fpckr_csv;
         wxChoice* choice_lat;
         wxChoice* choice_lon;
         wxChoice* choice_alt;
@@ -22,9 +23,6 @@ namespace panels {
         wxTextCtrl* txtctrl_info;
 
     private:
-        void on_load(wxCommandEvent& event);
-        void on_column_choice(wxCommandEvent& event);
-        void on_calc(wxCommandEvent& event);
-        void update_calc_button();
+
     };
 }

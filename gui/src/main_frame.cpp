@@ -18,6 +18,10 @@ MainFrame::MainFrame()
 	pnl_csv = new CsvPanel(ntb);
 	ntb->AddPage(pnl_csv, "CSV", false);
 
+	// temporary ////////////////////////////////
+	ntb->SetSelection(1);
+	/////////////////////////////////////////////
+
 	vszr->Add(ntb, 1, 0, 0);
 
 	this->SetMinSize(this->GetSize());
