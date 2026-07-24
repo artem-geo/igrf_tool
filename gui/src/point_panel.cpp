@@ -22,7 +22,7 @@ namespace panels {
         hszr_lat->Add(txtctrl_lat, 3, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
         hszr_lat->Add(new wxStaticText(this, wxID_ANY, wxString("dec ").append(wxString::FromUTF8("\xc2\xb0")),
             wxDefaultPosition, wxSize(32, -1), 0), 0, wxALIGN_CENTER_VERTICAL);
-        vszr_coords->Add(hszr_lat, 0, wxEXPAND, 5);
+        vszr_coords->Add(hszr_lat, 0, wxEXPAND);
 
         wxBoxSizer* hszr_lon = new wxBoxSizer(wxHORIZONTAL);
         wxStaticText* sttxt_lon = new wxStaticText(this, wxID_ANY, "Longitude", wxDefaultPosition, wxSize(65, -1), 0);
@@ -58,14 +58,10 @@ namespace panels {
         vszr_dtcalc->Add(hszr_date, 0, wxEXPAND);
 
         vszr_dtcalc->AddStretchSpacer(1);
-        
-        wxBoxSizer* hszr_btn = new wxBoxSizer(wxHORIZONTAL);
-        hszr_btn->Add(new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxSize(65, -1), 0),
-            0, wxALIGN_CENTER_VERTICAL, 5);
+
         btn_calc = new wxButton(this, wxID_ANY, "Calculate", wxDefaultPosition, wxDefaultSize, 0);
         btn_calc->Enable(false);
-        hszr_btn->Add(btn_calc, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
-        vszr_dtcalc->Add(hszr_btn, 0, wxEXPAND);
+        vszr_dtcalc->Add(btn_calc, 1, wxEXPAND | wxLEFT, 5);
 
         gszr_params->Add(vszr_dtcalc, 1, wxEXPAND | wxLEFT, 5);
 

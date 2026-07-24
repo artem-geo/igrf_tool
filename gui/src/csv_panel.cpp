@@ -10,7 +10,7 @@
 #include <wx/textfile.h>
 
 namespace {
-    
+
 }
 
 namespace panels {
@@ -33,7 +33,7 @@ namespace panels {
         hszr_lat->Add(choice_lat, 3, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
         hszr_lat->Add(new wxStaticText(this, wxID_ANY, wxString("dec ").append(wxString::FromUTF8("\xc2\xb0")),
             wxDefaultPosition, wxSize(32, -1), 0), 0, wxALIGN_CENTER_VERTICAL);
-        vszr_columns->Add(hszr_lat, 0, wxEXPAND, 5);
+        vszr_columns->Add(hszr_lat, 0, wxEXPAND);
 
         wxBoxSizer* hszr_lon = new wxBoxSizer(wxHORIZONTAL);
         wxStaticText* sttxt_lon = new wxStaticText(this, wxID_ANY, "Longitude", wxDefaultPosition, 
@@ -77,35 +77,52 @@ namespace panels {
         auto* vszr_csv_date_calc = new wxBoxSizer(wxVERTICAL);
 
         auto* hszr_file = new wxBoxSizer(wxHORIZONTAL);
-        wxStaticText* sttxt_csv = new wxStaticText(this, wxID_ANY, "CSV file",
-            wxDefaultPosition, wxSize(65, -1));
+        wxStaticText* sttxt_csv = new wxStaticText(this, wxID_ANY, "CSV file", wxDefaultPosition,
+            wxSize(65, -1), 0);
         sttxt_csv->SetToolTip("Choose a CSV file to write IGRF data to");
         hszr_file->Add(sttxt_csv, 0, wxALIGN_CENTER_VERTICAL);
         fpckr_csv = new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString,
             "Choose a CSV file", "CSV files (*.csv)|*.csv", wxDefaultPosition,
             wxDefaultSize, wxFLP_OPEN | wxFLP_FILE_MUST_EXIST | wxFLP_USE_TEXTCTRL | wxFLP_SMALL);
         hszr_file->Add(fpckr_csv, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
-        vszr_csv_date_calc->Add(hszr_file, 0, wxEXPAND);
+        vszr_csv_date_calc->Add(hszr_file, 0, wxEXPAND, 5);
 
+        auto* gszr_components = new wxGridSizer(2, 3, 5, 10);
+        chkbxs.chk_x = new wxCheckBox(this, wxID_ANY, "X");
+        chkbxs.chk_y = new wxCheckBox(this, wxID_ANY, "Y");
+        chkbxs.chk_z = new wxCheckBox(this, wxID_ANY, "Z");
+        chkbxs.chk_x->SetValue(true);
+        chkbxs.chk_y->SetValue(true);
+        chkbxs.chk_z->SetValue(true);
+        chkbxs.chk_f = new wxCheckBox(this, wxID_ANY, "F");
+        chkbxs.chk_d = new wxCheckBox(this, wxID_ANY, "D");
+        chkbxs.chk_i = new wxCheckBox(this, wxID_ANY, "I");
 
+        gszr_components->Add(chkbxs.chk_x, 1, wxEXPAND);
+        gszr_components->Add(chkbxs.chk_y, 1, wxEXPAND);
+        gszr_components->Add(chkbxs.chk_z, 1, wxEXPAND);
+        gszr_components->Add(chkbxs.chk_f, 1, wxEXPAND);
+        gszr_components->Add(chkbxs.chk_d, 1, wxEXPAND);
+        gszr_components->Add(chkbxs.chk_i, 1, wxEXPAND);
 
+        chkbxs.enable(false);
 
-
-
+        vszr_csv_date_calc->Add(gszr_components, 0, wxEXPAND | wxTOP, 5);
 
         btn_calc = new wxButton(this, wxID_ANY, "Calculate");
         btn_calc->Enable(false);
         vszr_csv_date_calc->Add(btn_calc, 0, wxEXPAND | wxTOP, 5);
 
-        gszr_params->Add(vszr_csv_date_calc, 1, wxEXPAND | wxLEFT | wxRIGHT, 10);
-        vszr_csv->Add(gszr_params, 0, wxEXPAND | wxTOP | wxBOTTOM, 10);
+        gszr_params->Add(vszr_csv_date_calc, 1, wxEXPAND | wxLEFT, 10);
+        vszr_csv->Add(gszr_params, 0, wxEXPAND | wxALL, 15);
 
         txtctrl_info = new wxTextCtrl(this, wxID_ANY, wxEmptyString,
             wxDefaultPosition, wxDefaultSize,
             wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP);
-        vszr_csv->Add(txtctrl_info, 1, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 10);
+        vszr_csv->Add(txtctrl_info, 1, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 15);
 
-        SetSizer(vszr_csv);
-        Layout();
+        this->SetSizer(vszr_csv);
+        this->Layout();
+        vszr_csv->Fit(this);
     }
 }
