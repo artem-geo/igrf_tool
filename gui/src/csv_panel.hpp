@@ -46,7 +46,19 @@ namespace panels {
 
     private:
         void on_csv(wxFileDirPickerEvent& event);
+        
+        void on_lat(wxCommandEvent& event);
+        void on_lon(wxCommandEvent& event);
+        void on_alt(wxCommandEvent& event);
+        void on_date(wxCommandEvent& event);
 
+        void on_x(wxCommandEvent& event);
+        void on_y(wxCommandEvent& event);
+        void on_z(wxCommandEvent& event);
+        void on_f(wxCommandEvent& event);
+        void on_d(wxCommandEvent& event);
+        void on_i(wxCommandEvent& event);
+        
         void enable_ctrls(bool are_enabled);
     };
 }

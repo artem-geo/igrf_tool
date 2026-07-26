@@ -65,7 +65,7 @@ namespace panels {
 
         gszr_params->Add(vszr_dtcalc, 1, wxEXPAND | wxLEFT, 5);
 
-        vszr_point->Add(gszr_params, 0, wxALL | wxEXPAND, 15);
+        vszr_point->Add(gszr_params, 0, wxALL | wxEXPAND, 10);
 
         wxGridSizer* gszr_results = new wxGridSizer(2, 3, 5, 10);
 
@@ -90,7 +90,7 @@ namespace panels {
         add_result(_("D"), degrees, txtctrl_res_d);
         add_result(_("I"), degrees, txtctrl_res_i);
 
-        vszr_point->Add(gszr_results, 0, wxBOTTOM | wxEXPAND | wxLEFT | wxRIGHT, 15);
+        vszr_point->Add(gszr_results, 1, wxBOTTOM | wxEXPAND | wxLEFT | wxRIGHT, 10);
 
         this->SetSizer(vszr_point);
         this->Layout();
