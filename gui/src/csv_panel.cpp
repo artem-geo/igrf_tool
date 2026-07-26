@@ -1,8 +1,7 @@
 #include "csv_panel.hpp"
 
-#include <array>
-#include <vector>
-
+#include <csv.hpp>
+#include <filesystem>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
@@ -10,7 +9,9 @@
 #include <wx/textfile.h>
 
 namespace {
-
+    enum class IDS {
+        FPCKR = 5000 + 1
+    };
 }
 
 namespace panels {
@@ -124,5 +125,37 @@ namespace panels {
         this->SetSizer(vszr_csv);
         this->Layout();
         vszr_csv->Fit(this);
+        Bind(wxEVT_FILEPICKER_CHANGED, &CsvPanel::on_csv, this, fpckr_csv->GetId());
+    }
+
+    void CsvPanel::on_csv(wxFileDirPickerEvent& event)
+    {
+        std::string fpath = std::string(fpckr_csv->GetPath());
+        if (!std::filesystem::exists(fpath)) {
+            fpckr_csv->SetPath("");
+            enable_ctrls(false);
+            choice_lat->Clear();
+            choice_lon->Clear();
+            choice_alt->Clear();
+            choice_date->Clear();
+        } else {
+            csv::CSVReader reader(fpath);
+            wxArrayString column_names;
+            for (const auto& col_name : reader.get_col_names())
+                column_names.Add(col_name);
+            choice_lat->Set(column_names);
+            choice_lon->Set(column_names);
+            choice_alt->Set(column_names);
+            choice_date->Set(column_names);
+            enable_ctrls(true);
+        }
+    }
+
+    void CsvPanel::enable_ctrls(bool are_enabled)
+    {
+        choice_lat->Enable(are_enabled);
+        choice_lon->Enable(are_enabled);
+        choice_alt->Enable(are_enabled);
+        choice_date->Enable(are_enabled); 
     }
 }

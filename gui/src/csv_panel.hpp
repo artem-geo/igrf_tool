@@ -1,5 +1,6 @@
 #pragma once
 
+#include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/checkbox.h>
 #include <wx/choice.h>
@@ -44,6 +45,8 @@ namespace panels {
         wxTextCtrl* txtctrl_info;
 
     private:
+        void on_csv(wxFileDirPickerEvent& event);
 
+        void enable_ctrls(bool are_enabled);
     };
 }
