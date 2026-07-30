@@ -18,6 +18,40 @@ namespace {
 }
 
 namespace panels {
+    void Checkboxes::enable(bool is_enable) 
+    {
+        x->Enable(is_enable);
+        y->Enable(is_enable);
+        z->Enable(is_enable);
+        f->Enable(is_enable);
+        d->Enable(is_enable);
+        i->Enable(is_enable);
+    }
+
+    void Choices::enable(bool is_enabled)
+    {
+        lat->Enable(is_enabled);
+        lon->Enable(is_enabled);
+        alt->Enable(is_enabled);
+        date->Enable(is_enabled);
+    }
+
+    void Choices::clear()
+    {
+        lat->Clear();
+        lon->Clear();
+        alt->Clear();
+        date->Clear();
+    }
+
+    void Choices::set(const wxArrayString& column_names)
+    {
+        lat->Set(column_names);
+        lon->Set(column_names);
+        alt->Set(column_names);
+        date->Set(column_names);
+    }
+
     CsvPanel::CsvPanel(wxWindow* parent)
         : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
     {
@@ -32,10 +66,10 @@ namespace panels {
             wxSize(65, -1), 0);
         sttxt_lat->SetToolTip("Latitude WGS84 column in decimal degrees [-90, 90]");
         hszr_lat->Add(sttxt_lat, 0, wxALIGN_CENTER_VERTICAL, 5);
-        choice_lat = new wxChoice(this, wxID_ANY);
-        add_choice_vertical_padding(choice_lat);
-        choice_lat->Enable(false);
-        hszr_lat->Add(choice_lat, 3, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
+        choices.lat = new wxChoice(this, wxID_ANY);
+        add_choice_vertical_padding(choices.lat);
+        choices.lat->Enable(false);
+        hszr_lat->Add(choices.lat, 3, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
         hszr_lat->Add(new wxStaticText(this, wxID_ANY, wxString("dec ").append(wxString::FromUTF8("\xc2\xb0")),
             wxDefaultPosition, wxSize(32, -1), 0), 0, wxALIGN_CENTER_VERTICAL);
         vszr_columns->Add(hszr_lat, 0, wxEXPAND);
@@ -45,10 +79,10 @@ namespace panels {
             wxSize(65, -1), 0);
         sttxt_lon->SetToolTip("Longitued WGS84 column in decimal degrees [-180, 180]");
         hszr_lon->Add(sttxt_lon, 0, wxALIGN_CENTER_VERTICAL, 5);
-        choice_lon = new wxChoice(this, wxID_ANY);
-        add_choice_vertical_padding(choice_lon);
-        choice_lon->Enable(false);
-        hszr_lon->Add(choice_lon, 3, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
+        choices.lon = new wxChoice(this, wxID_ANY);
+        add_choice_vertical_padding(choices.lon);
+        choices.lon->Enable(false);
+        hszr_lon->Add(choices.lon, 3, wxALIGN_CENTER_VERTICAL | wxLEFT | wxRIGHT, 5);
         hszr_lon->Add(new wxStaticText(this, wxID_ANY, wxString("dec ").append(wxString::FromUTF8("\xc2\xb0")),
             wxDefaultPosition, wxSize(32, -1), 0), 0, wxALIGN_CENTER_VERTICAL);
         vszr_columns->Add(hszr_lon, 0, wxEXPAND | wxTOP, 5);
@@ -58,10 +92,10 @@ namespace panels {
             wxSize(65, -1), 0);
         sttxt_alt->SetToolTip("Altitude column in km AMSL [> -2'300]");
         hszr_alt->Add(sttxt_alt, 0, wxALIGN_CENTER_VERTICAL, 5);
-        choice_alt = new wxChoice(this, wxID_ANY);
-        add_choice_vertical_padding(choice_alt);
-        choice_alt->Enable(false);
-        hszr_alt->Add(choice_alt, 3, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
+        choices.alt = new wxChoice(this, wxID_ANY);
+        add_choice_vertical_padding(choices.alt);
+        choices.alt->Enable(false);
+        hszr_alt->Add(choices.alt, 3, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
         hszr_alt->Add(new wxStaticText(this, wxID_ANY, "km",
             wxDefaultPosition, wxSize(32, -1), 0), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
         vszr_columns->Add(hszr_alt, 0, wxEXPAND | wxTOP, 5);
@@ -71,10 +105,10 @@ namespace panels {
             wxSize(65, -1), 0);
         sttxt_date->SetToolTip("Date column formatted as YYYY/MM/DD");
         hszr_date->Add(sttxt_date, 0, wxALIGN_CENTER_VERTICAL);
-        choice_date = new wxChoice(this, wxID_ANY);
-        add_choice_vertical_padding(choice_date);
-        choice_date->Enable(false);
-        hszr_date->Add(choice_date, 3, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
+        choices.date = new wxChoice(this, wxID_ANY);
+        add_choice_vertical_padding(choices.date);
+        choices.date->Enable(false);
+        hszr_date->Add(choices.date, 3, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
         hszr_date->Add(new wxStaticText(this, wxID_ANY, "",
             wxDefaultPosition, wxSize(32, -1), 0), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 5);
         vszr_columns->Add(hszr_date, 0, wxEXPAND | wxTOP, 5);
@@ -95,22 +129,22 @@ namespace panels {
         vszr_csv_date_calc->Add(hszr_file, 0, wxEXPAND, 5);
 
         auto* gszr_components = new wxGridSizer(2, 3, 5, 10);
-        chkbxs.chk_x = new wxCheckBox(this, wxID_ANY, "X");
-        chkbxs.chk_y = new wxCheckBox(this, wxID_ANY, "Y");
-        chkbxs.chk_z = new wxCheckBox(this, wxID_ANY, "Z");
-        chkbxs.chk_x->SetValue(true);
-        chkbxs.chk_y->SetValue(true);
-        chkbxs.chk_z->SetValue(true);
-        chkbxs.chk_f = new wxCheckBox(this, wxID_ANY, "F");
-        chkbxs.chk_d = new wxCheckBox(this, wxID_ANY, "D");
-        chkbxs.chk_i = new wxCheckBox(this, wxID_ANY, "I");
+        chkbxs.x = new wxCheckBox(this, wxID_ANY, "X");
+        chkbxs.y = new wxCheckBox(this, wxID_ANY, "Y");
+        chkbxs.z = new wxCheckBox(this, wxID_ANY, "Z");
+        chkbxs.x->SetValue(true);
+        chkbxs.y->SetValue(true);
+        chkbxs.z->SetValue(true);
+        chkbxs.f = new wxCheckBox(this, wxID_ANY, "F");
+        chkbxs.d = new wxCheckBox(this, wxID_ANY, "D");
+        chkbxs.i = new wxCheckBox(this, wxID_ANY, "I");
 
-        gszr_components->Add(chkbxs.chk_x, 1, wxEXPAND | wxALIGN_CENTRE_HORIZONTAL);
-        gszr_components->Add(chkbxs.chk_y, 1, wxEXPAND | wxALIGN_CENTRE_HORIZONTAL);
-        gszr_components->Add(chkbxs.chk_z, 1, wxEXPAND | wxALIGN_CENTRE_HORIZONTAL);
-        gszr_components->Add(chkbxs.chk_f, 1, wxEXPAND | wxALIGN_CENTRE_HORIZONTAL);
-        gszr_components->Add(chkbxs.chk_d, 1, wxEXPAND | wxALIGN_CENTRE_HORIZONTAL);
-        gszr_components->Add(chkbxs.chk_i, 1, wxEXPAND | wxALIGN_CENTRE_HORIZONTAL);
+        gszr_components->Add(chkbxs.x, 1, wxEXPAND | wxALIGN_CENTRE_HORIZONTAL);
+        gszr_components->Add(chkbxs.y, 1, wxEXPAND | wxALIGN_CENTRE_HORIZONTAL);
+        gszr_components->Add(chkbxs.z, 1, wxEXPAND | wxALIGN_CENTRE_HORIZONTAL);
+        gszr_components->Add(chkbxs.f, 1, wxEXPAND | wxALIGN_CENTRE_HORIZONTAL);
+        gszr_components->Add(chkbxs.d, 1, wxEXPAND | wxALIGN_CENTRE_HORIZONTAL);
+        gszr_components->Add(chkbxs.i, 1, wxEXPAND | wxALIGN_CENTRE_HORIZONTAL);
 
         chkbxs.enable(false);
 
@@ -141,19 +175,13 @@ namespace panels {
         if (!std::filesystem::exists(fpath)) {
             fpckr_csv->SetPath("");
             enable_ctrls(false);
-            choice_lat->Clear();
-            choice_lon->Clear();
-            choice_alt->Clear();
-            choice_date->Clear();
+            choices.clear();
         } else {
             csv::CSVReader reader(fpath);
             wxArrayString column_names;
             for (const auto& col_name : reader.get_col_names())
                 column_names.Add(col_name);
-            choice_lat->Set(column_names);
-            choice_lon->Set(column_names);
-            choice_alt->Set(column_names);
-            choice_date->Set(column_names);
+            choices.set(column_names);
             enable_ctrls(true);
         }
         Layout();
@@ -161,10 +189,7 @@ namespace panels {
 
     void CsvPanel::enable_ctrls(bool are_enabled)
     {
-        choice_lat->Enable(are_enabled);
-        choice_lon->Enable(are_enabled);
-        choice_alt->Enable(are_enabled);
-        choice_date->Enable(are_enabled);
+        choices.enable(are_enabled);
         chkbxs.enable(are_enabled);
     }
 }

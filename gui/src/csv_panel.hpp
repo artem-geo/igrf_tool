@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+#include <vector>
 #include <wx/arrstr.h>
 #include <wx/button.h>
 #include <wx/checkbox.h>
@@ -9,56 +11,59 @@
 #include <wx/textctrl.h>
 
 namespace panels {
-    class ChkBoxes {
+    class Checkboxes {
     public:
-        ChkBoxes() = default;
-        ~ChkBoxes() = default;
-        void enable(bool is_enable) {
-            chk_x->Enable(is_enable);
-            chk_y->Enable(is_enable);
-            chk_z->Enable(is_enable);
-            chk_f->Enable(is_enable);
-            chk_d->Enable(is_enable);
-            chk_i->Enable(is_enable);
-        }
-        wxCheckBox* chk_x = nullptr;
-        wxCheckBox* chk_y = nullptr;
-        wxCheckBox* chk_z = nullptr;
-        wxCheckBox* chk_f = nullptr;
-        wxCheckBox* chk_d = nullptr;
-        wxCheckBox* chk_i = nullptr;
+        Checkboxes() = default;
+        ~Checkboxes() = default;
+        void enable(bool is_enable);
+        wxCheckBox* x = nullptr;
+        wxCheckBox* y = nullptr;
+        wxCheckBox* z = nullptr;
+        wxCheckBox* f = nullptr;
+        wxCheckBox* d = nullptr;
+        wxCheckBox* i = nullptr;
     };
+
+    class Choices {
+    public:
+        Choices() = default;
+        ~Choices() = default;
+        void enable(bool is_enabled);
+        void clear();
+        void set(const wxArrayString& column_names);
+        wxChoice* lat = nullptr;
+        wxChoice* lon = nullptr;
+        wxChoice* alt = nullptr;
+        wxChoice* date = nullptr;
+    };
+
     class CsvPanel : public wxPanel {
     public:
         CsvPanel(wxWindow* parent);
         ~CsvPanel() = default;
-
     public:
         wxTextCtrl* txtctrl_file;
         wxFilePickerCtrl* fpckr_csv;
-        ChkBoxes chkbxs;
-        wxChoice* choice_lat;
-        wxChoice* choice_lon;
-        wxChoice* choice_alt;
-        wxChoice* choice_date;
+        Checkboxes chkbxs;
+        Choices choices;
         wxButton* btn_calc;
         wxTextCtrl* txtctrl_info;
-
     private:
         void on_csv(wxFileDirPickerEvent& event);
         
-        void on_lat(wxCommandEvent& event);
-        void on_lon(wxCommandEvent& event);
-        void on_alt(wxCommandEvent& event);
-        void on_date(wxCommandEvent& event);
-
-        void on_x(wxCommandEvent& event);
-        void on_y(wxCommandEvent& event);
-        void on_z(wxCommandEvent& event);
-        void on_f(wxCommandEvent& event);
-        void on_d(wxCommandEvent& event);
-        void on_i(wxCommandEvent& event);
-        
+        void on_column(wxCommandEvent& event);
+        void on_chbx(wxCommandEvent& event);
+                
         void enable_ctrls(bool are_enabled);
+    private:
+        // std::map<wxChoice*, std::vector<wxChoice*>> choices_map = {
+        //     {choice_lat, {choice_lon, choice_alt, choice_date}},
+        //     {choice_lon, {choice_lat, choice_alt, choice_date}},
+        //     {choice_alt, {choice_lat, choice_lon, choice_date}},
+        //     {choice_date, {choice_lat, choice_lon, choice_alt}}
+        // };
+        // std::map<wxCheckBox*, std::vector<wxCheckBox*>> chkbxs_map = {
+        //     {chkbxs.x, {chkbxs.y, chbxs.}}
+        // };
     };
 }
