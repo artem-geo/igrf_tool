@@ -28,6 +28,12 @@ namespace panels {
         i->Enable(is_enable);
     }
 
+    bool Checkboxes::is_any_checked()
+    {
+        return (x->IsChecked()) || (y->IsChecked()) || (z->IsChecked()) ||
+               (f->IsChecked()) || (d->IsChecked()) || (i->IsChecked());
+    }
+
     void Choices::enable(bool is_enabled)
     {
         lat->Enable(is_enabled);
@@ -50,6 +56,12 @@ namespace panels {
         lon->Set(column_names);
         alt->Set(column_names);
         date->Set(column_names);
+    }
+
+    bool Choices::do_all_chosen()
+    {
+        return (lat->GetCurrentSelection() != -1) && (lon->GetCurrentSelection() != -1) &&
+               (alt->GetCurrentSelection() != -1) && (date->GetCurrentSelection() != -1);
     }
 
     CsvPanel::CsvPanel(wxWindow* parent)
@@ -167,6 +179,16 @@ namespace panels {
         this->Layout();
         vszr_csv->Fit(this);
         Bind(wxEVT_FILEPICKER_CHANGED, &CsvPanel::on_csv, this, fpckr_csv->GetId());
+        Bind(wxEVT_CHECKBOX, &CsvPanel::on_choice_checkbox, this, chkbxs.x->GetId());
+        Bind(wxEVT_CHECKBOX, &CsvPanel::on_choice_checkbox, this, chkbxs.y->GetId());
+        Bind(wxEVT_CHECKBOX, &CsvPanel::on_choice_checkbox, this, chkbxs.z->GetId());
+        Bind(wxEVT_CHECKBOX, &CsvPanel::on_choice_checkbox, this, chkbxs.f->GetId());
+        Bind(wxEVT_CHECKBOX, &CsvPanel::on_choice_checkbox, this, chkbxs.d->GetId());
+        Bind(wxEVT_CHECKBOX, &CsvPanel::on_choice_checkbox, this, chkbxs.i->GetId());
+        Bind(wxEVT_CHOICE, &CsvPanel::on_choice_checkbox, this, choices.lat->GetId());
+        Bind(wxEVT_CHOICE, &CsvPanel::on_choice_checkbox, this, choices.lon->GetId());
+        Bind(wxEVT_CHOICE, &CsvPanel::on_choice_checkbox, this, choices.alt->GetId());
+        Bind(wxEVT_CHOICE, &CsvPanel::on_choice_checkbox, this, choices.date->GetId());
     }
 
     void CsvPanel::on_csv(wxFileDirPickerEvent& event)
@@ -186,6 +208,12 @@ namespace panels {
         }
         Layout();
     }
+
+    void CsvPanel::on_choice_checkbox(wxCommandEvent& event) 
+    {
+        btn_calc->Enable(choices.do_all_chosen() && chkbxs.is_any_checked());
+    }
+
 
     void CsvPanel::enable_ctrls(bool are_enabled)
     {

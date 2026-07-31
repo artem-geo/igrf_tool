@@ -22,6 +22,7 @@ namespace panels {
         wxCheckBox* f = nullptr;
         wxCheckBox* d = nullptr;
         wxCheckBox* i = nullptr;
+        bool is_any_checked();
     };
 
     class Choices {
@@ -35,6 +36,7 @@ namespace panels {
         wxChoice* lon = nullptr;
         wxChoice* alt = nullptr;
         wxChoice* date = nullptr;
+        bool do_all_chosen();
     };
 
     class CsvPanel : public wxPanel {
@@ -50,20 +52,7 @@ namespace panels {
         wxTextCtrl* txtctrl_info;
     private:
         void on_csv(wxFileDirPickerEvent& event);
-        
-        void on_column(wxCommandEvent& event);
-        void on_chbx(wxCommandEvent& event);
-                
+        void on_choice_checkbox(wxCommandEvent& event);   
         void enable_ctrls(bool are_enabled);
-    private:
-        // std::map<wxChoice*, std::vector<wxChoice*>> choices_map = {
-        //     {choice_lat, {choice_lon, choice_alt, choice_date}},
-        //     {choice_lon, {choice_lat, choice_alt, choice_date}},
-        //     {choice_alt, {choice_lat, choice_lon, choice_date}},
-        //     {choice_date, {choice_lat, choice_lon, choice_alt}}
-        // };
-        // std::map<wxCheckBox*, std::vector<wxCheckBox*>> chkbxs_map = {
-        //     {chkbxs.x, {chkbxs.y, chbxs.}}
-        // };
     };
 }
