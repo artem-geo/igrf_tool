@@ -16,21 +16,30 @@ namespace {
         min_size.SetHeight(min_size.GetHeight() + choice->FromDIP(4));
         choice->SetMinSize(min_size);
     }
-    std::vector<char> get_fields(const panels::Checkboxes& chkbxs)
+
+    std::vector<std::string> get_new_fields(const panels::Checkboxes& chkbxs)
     {
-        std::vector<char> output_fields;
+        std::vector<std::string> new_fields;
         if (chkbxs.x->IsEnabled())
-            output_fields.push_back('x');
+            new_fields.push_back("x");
         if (chkbxs.y->IsEnabled())
-            output_fields.push_back('y');
+            new_fields.push_back("y");
         if (chkbxs.z->IsEnabled())
-            output_fields.push_back('z');
+            new_fields.push_back("z");
         if (chkbxs.f->IsEnabled())
-            output_fields.push_back('f');
+            new_fields.push_back("f");
         if (chkbxs.d->IsEnabled())
-            output_fields.push_back('d');
+            new_fields.push_back("d");
         if (chkbxs.i->IsEnabled())
-            output_fields.push_back('i');
+            new_fields.push_back("i");
+        return new_fields;
+    }
+
+    std::vector<std::string> prep_headers(csv::CSVReader& reader,
+        const std::vector<std::string>& new_fields)
+    {
+        std::vector<std::string> output_fields = reader.get_col_names();
+        output_fields.insert(output_fields.end(), new_fields.begin(), new_fields.end());
         return output_fields;
     }
 }
@@ -250,8 +259,8 @@ namespace panels {
             csv::CSVReader reader(fpath);
             std::ofstream ofile(fspath);
             auto writer = csv::make_csv_writer(ofile);
-            auto output_fields = get_fields(chkbxs);
-            // writer.write_row(prep_headers(reader, output_fields));
+            auto new_fields = get_new_fields(chkbxs);
+            writer.write_row(prep_headers(reader, new_fields));
             // for (const auto& row : reader) {
             //     writer.write_row(prep_row(row, output_fields));
             // }
