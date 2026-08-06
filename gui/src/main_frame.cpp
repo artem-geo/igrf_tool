@@ -30,5 +30,5 @@ MainFrame::MainFrame()
 	this->SetSizer(vszr);
 	this->Layout();
 
-	this->Centre(wxBOTH);
+	this->Centre(wxCENTRE_ON_SCREEN);
 }

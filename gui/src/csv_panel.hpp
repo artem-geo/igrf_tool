@@ -52,7 +52,8 @@ namespace panels {
         wxTextCtrl* txtctrl_info;
     private:
         void on_csv(wxFileDirPickerEvent& event);
-        void on_choice_checkbox(wxCommandEvent& event);   
+        void on_choice_checkbox(wxCommandEvent& event);
+        void on_calc(wxCommandEvent& event);
         void enable_ctrls(bool are_enabled);
     };
 }

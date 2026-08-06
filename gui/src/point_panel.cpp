@@ -95,6 +95,7 @@ namespace panels {
         this->SetSizer(vszr_point);
         this->Layout();
         vszr_point->Fit(this);
+        this->Centre();
 
         Bind(wxEVT_TEXT, &PointPanel::on_lon, this, txtctrl_lon->GetId());
         Bind(wxEVT_TEXT, &PointPanel::on_lat, this, txtctrl_lat->GetId());

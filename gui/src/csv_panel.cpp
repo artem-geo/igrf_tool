@@ -2,6 +2,7 @@
 
 #include <csv.hpp>
 #include <filesystem>
+#include <format>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
@@ -14,6 +15,23 @@ namespace {
         auto min_size = choice->GetBestSize();
         min_size.SetHeight(min_size.GetHeight() + choice->FromDIP(4));
         choice->SetMinSize(min_size);
+    }
+    std::vector<char> get_fields(const panels::Checkboxes& chkbxs)
+    {
+        std::vector<char> output_fields;
+        if (chkbxs.x->IsEnabled())
+            output_fields.push_back('x');
+        if (chkbxs.y->IsEnabled())
+            output_fields.push_back('y');
+        if (chkbxs.z->IsEnabled())
+            output_fields.push_back('z');
+        if (chkbxs.f->IsEnabled())
+            output_fields.push_back('f');
+        if (chkbxs.d->IsEnabled())
+            output_fields.push_back('d');
+        if (chkbxs.i->IsEnabled())
+            output_fields.push_back('i');
+        return output_fields;
     }
 }
 
@@ -178,6 +196,8 @@ namespace panels {
         this->SetSizer(vszr_csv);
         this->Layout();
         vszr_csv->Fit(this);
+        this->Centre();
+
         Bind(wxEVT_FILEPICKER_CHANGED, &CsvPanel::on_csv, this, fpckr_csv->GetId());
         Bind(wxEVT_CHECKBOX, &CsvPanel::on_choice_checkbox, this, chkbxs.x->GetId());
         Bind(wxEVT_CHECKBOX, &CsvPanel::on_choice_checkbox, this, chkbxs.y->GetId());
@@ -189,6 +209,7 @@ namespace panels {
         Bind(wxEVT_CHOICE, &CsvPanel::on_choice_checkbox, this, choices.lon->GetId());
         Bind(wxEVT_CHOICE, &CsvPanel::on_choice_checkbox, this, choices.alt->GetId());
         Bind(wxEVT_CHOICE, &CsvPanel::on_choice_checkbox, this, choices.date->GetId());
+        Bind(wxEVT_BUTTON, &CsvPanel::on_calc, this, btn_calc->GetId());
     }
 
     void CsvPanel::on_csv(wxFileDirPickerEvent& event)
@@ -214,6 +235,32 @@ namespace panels {
         btn_calc->Enable(choices.do_all_chosen() && chkbxs.is_any_checked());
     }
 
+    void CsvPanel::on_calc(wxCommandEvent& event)
+    {
+        std::string fpath = std::string(fpckr_csv->GetPath());
+        if (!std::filesystem::exists(fpath)) {
+            fpckr_csv->SetPath("");
+            enable_ctrls(false);
+            choices.clear();
+        } else {
+
+            std::filesystem::path fspath(fpath);
+            fspath.replace_filename(std::format("{}_res{}",fspath.stem().string(),
+                fspath.extension().string()));
+            csv::CSVReader reader(fpath);
+            std::ofstream ofile(fspath);
+            auto writer = csv::make_csv_writer(ofile);
+            auto output_fields = get_fields(chkbxs);
+            // writer.write_row(prep_headers(reader, output_fields));
+            // for (const auto& row : reader) {
+            //     writer.write_row(prep_row(row, output_fields));
+            // }
+
+            wxMessageBox(std::format("Results written to ./{}", fspath.filename().string()), "Completed",
+                wxICON_INFORMATION);
+        }
+        Layout();
+    }
 
     void CsvPanel::enable_ctrls(bool are_enabled)
     {
