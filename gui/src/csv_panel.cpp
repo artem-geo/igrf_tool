@@ -42,6 +42,7 @@ namespace {
         output_fields.insert(output_fields.end(), new_fields.begin(), new_fields.end());
         return output_fields;
     }
+
 }
 
 namespace panels {
@@ -89,6 +90,14 @@ namespace panels {
     {
         return (lat->GetCurrentSelection() != -1) && (lon->GetCurrentSelection() != -1) &&
                (alt->GetCurrentSelection() != -1) && (date->GetCurrentSelection() != -1);
+    }
+
+    std::map<std::string, std::string> Choices::get_choices()
+    {
+        std::map<std::string, std::string> meta_info;
+
+
+        return meta_info;
     }
 
     CsvPanel::CsvPanel(wxWindow* parent)
@@ -252,7 +261,6 @@ namespace panels {
             enable_ctrls(false);
             choices.clear();
         } else {
-
             std::filesystem::path fspath(fpath);
             fspath.replace_filename(std::format("{}_res{}",fspath.stem().string(),
                 fspath.extension().string()));
@@ -260,11 +268,17 @@ namespace panels {
             std::ofstream ofile(fspath);
             auto writer = csv::make_csv_writer(ofile);
             auto new_fields = get_new_fields(chkbxs);
-            writer.write_row(prep_headers(reader, new_fields));
-            // for (const auto& row : reader) {
-            //     writer.write_row(prep_row(row, output_fields));
-            // }
+            auto headers = prep_headers(reader, new_fields);
+            writer.write_row(headers);
 
+            auto meta_headers = get_meta_headers(choices);
+            for (auto& row : reader) {
+                if (row.size() != (headers.size() - new_fields.size())) {
+                    writer.write_row(row);
+                    continue;
+                }
+                complement_row(row, new_fields);
+            }
             wxMessageBox(std::format("Results written to ./{}", fspath.filename().string()), "Completed",
                 wxICON_INFORMATION);
         }

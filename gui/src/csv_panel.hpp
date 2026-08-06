@@ -37,6 +37,7 @@ namespace panels {
         wxChoice* alt = nullptr;
         wxChoice* date = nullptr;
         bool do_all_chosen();
+        std::map<std::string, std::string> get_choices();
     };
 
     class CsvPanel : public wxPanel {
