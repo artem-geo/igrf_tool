@@ -43,6 +43,17 @@ namespace {
         return output_fields;
     }
 
+    std::map<std::string, std::string> get_meta_headers(panels::Choices& choices)
+    {
+        std::map<std::string, std::string> meta_headers;
+        meta_headers["lat"] = choices.lat->GetStringSelection().ToStdString();
+        meta_headers["lon"] = choices.lon->GetStringSelection().ToStdString();
+        meta_headers["alt"] = choices.alt->GetStringSelection().ToStdString();
+        meta_headers["date"] = choices.date->GetStringSelection().ToStdString();
+        
+        return meta_headers;
+    }
+
 }
 
 namespace panels {
